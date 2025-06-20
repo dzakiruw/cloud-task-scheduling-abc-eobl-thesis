@@ -1,0 +1,44 @@
+\chapter{PENDAHULUAN}
+
+\section{Latar Belakang}
+Lingkungan \textit{cloud} memungkinkan berbagai individu dan organisasi untuk mengakses aplikasi dan informasi melalui internet, memanfaatkan infrastruktur berbasis server jarak jauh yang mengelola data dan aplikasi secara efisien \parencite{Younus2025}. Dalam lingkungan ini, aplikasi diorganisir menjadi kumpulan unit pekerjaan yang disebut tugas (\textit{task}), yang didefinisikan sebagai sebuah program untuk dieksekusi pada lingkungan \textit{cloud} \parencite{Buyya2013}. Tugas-tugas komputasi yang kompleks membutuhkan penjadwalan yang efisien pada sumber daya yang tersedia. Penerapan penjadwalan tugas digunakan untuk mengalokasikan sumber daya yang tersedia guna memaksimalkan berbagai tujuan penjadwalan, seperti \textit{makespan}, biaya komputasi, keandalan, dan pemanfaatan sumber daya \parencite{Prity2023}.
+
+Tujuan-tujuan penjadwalan agar tecapai serta mengatasi masalah komputasi yang kompleks, dilakukan berbagai pendekatan dan perkembangan algoritma. Banyak peneliti mengadopsi teknik penjadwalan yang terinspirasi dari fenomena alam, seperti perilaku koloni semut dan koloni lebah. Teknik-teknik ini berada pada satu konsep algoritma, yaitu \textit{Swarm Intelligence}, sebuah pendekatan probabilistik untuk menemukan solusi optimal secara efisien \parencite{Deepa2016}.
+
+Algoritma \textit{Artificial Bee Colony} (ABC) adalah salah satu algoritma dengan konsep \textit{Swarm Intelligence} yang termasuk dalam jenis \textit{metaheuristik}. ABC terinspirasi oleh perilaku mencari makan lebah madu, yang efektif dalam mengeksplorasi ruang solusi tanpa harus mengevaluasi semua kemungkinan solusi secara langsung. Dengan demikian, ABC dapat secara efisien mengurangi makespan dalam penjadwalan tugas cloud, mempercepat waktu penyelesaian dan meningkatkan efisiensi penggunaan waktu \parencite{Tawfeek2015}.
+
+Algoritma ABC memiliki kekurangan dalam hal pemanfaatan sumber daya (\textit{resource utilization}) dalam penjadwalan tugas \textit{cloud computing} \parencite{Li2024}. Hal ini disebabkan oleh kecenderungan algoritma untuk lebih fokus pada eksplorasi dibandingkan eksploitasi, yang menyebabkan kegagalan dalam memanfaatkan solusi terbaik yang ditemukan sebelumnya. Selain itu, algoritma ABC juga menyebabkan penurunan cepat dalam keragaman populasi, yang memperburuk pemanfaatan sumber daya. Kondisi ini berpotensi menyebabkan ketidakseimbangan beban (\textit{imbalance degree}) antar sumber daya, yang menurunkan efisiensi secara keseluruhan.
+
+\textit{Elite Opposition-Based Learning} (EOBL) meningkatkan kemampuan eksploitasi dengan menggunakan solusi oposisi dari individu \textit{elite}. Dengan eksploitasi yang lebih baik, algoritma dapat menghindari jebakan lokal dan menemukan solusi yang lebih optimal \parencite{Guo2015}. Akibatnya, penggunaan EOBL berpotensi mengurangi imbalance degree karena solusi yang lebih baik mengarah pada distribusi beban tugas yang lebih merata antar sumber daya. Namun, meskipun EOBL berhasil meningkatkan keragaman populasi dan eksplorasi, ada kelemahan yang perlu diperhatikan. \textit{Elite Opposition-Based Learning} yang diterapkan dalam algoritma \textit{Elite Opposition Flower Pollination} (EOFPA) kesulitan untuk mencapai solusi optimal pada masalah penjadwalan yang kompleks. Hal ini menyebabkan \textit{makespan} yang lebih tinggi dibandingkan dengan algoritma lain yang lebih efisien \parencite{Zhou2016}.
+
+Penelitian ini dilakukan optimasi penggunaan algoritma \textit{Artificial Bee Colony} (ABC) yang dikombinasikan dengan pendekatan \textit{Elite Opposition-Based Learning} (EOBL) untuk penjadwalan tugas di lingkungan \textit{cloud}. Metode menggabungkan ABC dengan EOBL diharapkan dapat meningkatkan efisiensi penjadwalan tugas dengan mempercepat ke solusi optimal dan meningkatkan keoptimalan hasil penjadwalan. Penelitian ini tidak hanya akan mengembangkan algoritma secara teoritis, tetapi juga akan diimplementasikan langsung pada sistem \textit{cloud} yang sesungguhnya pada skala kecil. Penelitian ini diharapkan dapat memberikan kontribusi signifikan dalam menguji algoritma dalam kondisi yang lebih realistis dan praktis.
+
+\section{Rumusan Masalah}
+Berdasarkan latar belakang, rumusan masalah dalam penelitian ini adalah:
+\begin{enumerate} [nolistsep]
+    \item Bagaimana cara implementasi algoritma \textit{Artificial Bee Colony} (ABC) yang dikombinasikan dengan \textit{Elite Opposition-Based Learning} (EOBL) dalam mengalokasikan \textit{resource} pada suatu \textit{cloud environment}?
+    \item Seberapa efektif algoritma ABC-EOBL dalam melakukan penjadwalan tugas jika dibandingkan dengan algoritma \textit{Swarm Intelligence} dan \textit{metaheuristik} lainnya, seperti \textit{Particle Swarm Optimization} (PSO), \textit{Genetic Algorithm} (GA), dan \textit{Artificial Bee Colony} (ABC) dalam hal efektivitas keseluruhan penjadwalan tugas di \textit{cloud environment} sejenis?
+\end{enumerate}
+
+\section{Batasan Masalah}
+Berdasarkan rumusan masalah, adapun batasan masalah dalam penelitian ini adalah:
+\begin{enumerate} [nolistsep]
+    \item Penelitian ini dilakukan dengan menggunakan Eclipse IDE untuk implementasi dan evaluasi hasil penelitian, serta CloudSim sebagai platform simulasi untuk menguji kinerja algoritma dalam lingkungan \textit{cloud}.
+    \item Penelitian ini difokuskan pada perbandingan algoritma \textit{Artificial Bee Colony} (ABC) yang dikombinasikan dengan \textit{Elite Opposition-Based Learning} (EOBL) dalam hal penggunaan \textit{makespan},\textit{ average start time}, \textit{average finish time}, \textit{average execution time}, \textit{average waiting time}, \textit{scheduling length}, \textit{throughput}, \textit{resource utilization}, \textit{total energy consumption}, dan \textit{imbalance degree}.
+    \item Penelitian ini menggunakan dataset \textit{The San Diego Supercomputer Center} (SDSC) \textit{Blue Horizon Log}, \textit{Random Simple}, dan \textit{Random Stratified}.
+    \item Penelitian ini diimplementasikan pada \textit{real environment} dengan skala kecil yang bertujuan untuk menguji algoritma dalam pengelolaan penjadwalan tugas agar performa dan hasil lebih akurat dan aplikatif dalam lingkungan nyata.
+\end{enumerate}
+
+\section{Tujuan}
+Tujuan dari penelitian ini adalah:
+\begin{enumerate} [nolistsep]
+    \item Mengembangkan dan mengimplementasikan algoritma \textit{Artificial Bee Colony} (ABC) yang dikombinasikan dengan \textit{Elite Opposition-Based Learning} (EOBL) untuk mengalokasikan sumber daya pada lingkungan komputasi awan.
+    \item Membandingkan efektivitas algoritma ABC-EOBL dengan algoritma \textit{Swarm Intelligence} dan \textit{metaheuristik} lainnya, seperti \textit{Particle Swarm Optimization} (PSO), \textit{Genetic Algorithm} (GA), dan \textit{Artificial Bee Colony} (ABC) dalam hal efektivitas keseluruhan penjadwalan tugas di \textit{cloud environment} sejenis, termasuk \textit{makespan},\textit{ average start time}, \textit{average finish time}, \textit{average execution time}, \textit{average waiting time}, \textit{scheduling length}, \textit{throughput}, \textit{resource utilization}, \textit{total energy consumption}, dan \textit{imbalance degree}.
+\end{enumerate}
+
+\section{Manfaat}
+Penelitian ini diharapkan memberikan manfaat sebagai berikut:
+\begin{enumerate} [nolistsep]
+    \item Meningkatkan efisiensi penggunaan sumber daya \textit{cloud} dengan mengoptimalkan penjadwalan tugas, sehingga dapat mengurangi biaya operasional dan meningkatkan performa sistem.
+    \item Menghasilkan solusi yang dapat meningkatkan kinerja sistem \textit{cloud} dalam hal penggunaan \textit{makespan},\textit{ average start time}, \textit{average finish time}, \textit{average execution time}, \textit{average waiting time}, \textit{scheduling length}, \textit{throughput}, \textit{resource utilization}, \textit{total energy consumption}, dan \textit{imbalance degree}.
+\end{enumerate}

@@ -1,0 +1,2367 @@
+\chapter{METODOLOGI}
+
+\section{Metode yang digunakan}
+Bab ini akan dijelaskan secara rinci metodologi yang digunakan dalam penelitian. Metodologi ini mencakup langkah-langkah sistematis yang dilakukan mulai dari persiapan data, simulasi dan implementasi algoritma, hingga pengujian dan evaluasi hasil. Sebagai bagian dari perencanaan dan pelaksanaan penelitian, dibuat diagram alur yang menggambarkan tahapan-tahapan penelitian secara sistematis yang dapat dilihat pada gambar \ref{figure:Flowchart Rancangan Metodologi Penelitian}.
+
+\begin{figure} [H]
+  \includegraphics[width=1\linewidth]{gambar/Flowchart Rancangan Metodologi Penelitian.png}
+  \caption{Rancangan metodologi penelitian}
+  \label{figure:Flowchart Rancangan Metodologi Penelitian}
+\end{figure}
+
+\subsection{Identifikasi Masalah}
+Penelitian ini mengidentifikasi masalah utama dalam penjadwalan tugas di lingkungan \textit{cloud} yang meliputi kebutuhan untuk memaksimalkan pemanfaatan sumber daya sekaligus mengurangi makespan dan ketidakseimbangan beban kerja antar sumber daya. Algoritma \textit{Artificial Bee Colony} (ABC), meskipun efektif dalam eksplorasi ruang solusi, memiliki keterbatasan pada aspek eksploitasi sehingga sering gagal mengoptimalkan penggunaan sumber daya dan berpotensi terjebak pada solusi lokal yang suboptimal. Kombinasi ABC dengan \textit{Elite Opposition-Based Learning} (EOBL) diharapkan dapat mengatasi permasalahan tersebut dengan meningkatkan eksploitasi dan diversitas populasi, sehingga dapat menghasilkan penjadwalan yang lebih optimal dan efisien.
+
+\subsection{Studi Literatur}
+Pada tahap ini, dilakukan studi literatur yang mendalam untuk memahami berbagai pendekatan dan metode yang telah digunakan dalam penjadwalan tugas di lingkungan \textit{cloud computing}. Studi ini mencakup kajian terhadap penelitian-penelitian terdahulu dengan fokus pada kelebihan, kelemahan, serta strategi peningkatan performa seperti studi berbasis oposisi dan penyesuaian parameter dinamis. Selain itu, informasi terkait permasalahan penjadwalan dikumpulkan melalui berbagai sumber referensi, termasuk makalah, buku, dan jurnal yang memiliki relevansi dengan permasalahan penelitian ini. Hasil studi literatur ini menjadi landasan teoritis yang kuat untuk pengembangan algoritma yang lebih efisien serta menjadi acuan dalam merancang metode simulasi dan evaluasi pada penelitian ini.
+
+\subsection{Persiapan \textit{Dataset}}
+Penelitian ini menggunakan tiga set data utama. Pertama, SDSC (\textit{San Diego Supercomputer Center}) yang berisi tugas-tugas dari lingkungan superkomputer. \textit{Dataset} ini membutuhkan \textit{preprocessing} untuk mempersiapkan data sebelum digunakan. Kedua, \textit{Simple Random
+Dataset}, yang dibuat secara acak menggunakan rumus pada Excel untuk menghasilkan tugas secara acak. Ketiga, \textit{Stratified Random}, yang dihasilkan berdasarkan rentang nilai minimum dan maksimum dari nilai minimum dan maksimum SDSC.
+
+\subsection{Konfigurasi Awal Arsitektur \textit{Cloud}}
+\subsubsection{Konfigurasi Awal Simulasi Arsitektur \textit{Cloud}}
+Pada tahap ini, \textit{cloud simulator} akan digunakan untuk mengonfigurasi sistem dan mereplikasi skenario pengujian. Kebutuhan penelitian akan menentukan parameter seperti jumlah tugas, kapasitas server, dan distribusi sumber daya. Tujuan utama konfigurasi ini adalah untuk menjamin bahwa lingkungan simulasi secara akurat menggambarkan situasi manajemen sumber daya \textit{cloud} yang sebenarnya. Konfigurasi arsitektur simulasi dapat dilihat pada gambar \ref{figure:Arsitektur Simulasi CloudSim}
+
+\begin{figure} [H]
+  \includegraphics[width=1\linewidth]{gambar/Arsitektur Simulasi CloudSim.png}
+  \caption{Arsitektur simulasi CloudSim}
+  \label{figure:Arsitektur Simulasi CloudSim}
+\end{figure}
+
+Setiap \textit{virtual machine} dan \textit{data center} memiliki spesifikasi masing-masing. Adapun spesifikasi pada tiap sumber daya yang digunakan dalam penelitian ini dapat dilihat dalam tabel \ref{tabel:Spesifikasi Virtual Machine Simulasi}, tabel \ref{tabel:Spesifikasi Host Simulasi}, dan tabel \ref{tabel:Spesifikasi Data Center Simulasi}.
+
+\begin{table} [H]
+    \centering
+    \caption{Spesifikasi \textit{virtual machine} CloudSim}
+    \label{tabel:Spesifikasi Virtual Machine Simulasi}
+    \begin{tabular}{|>{\centering\arraybackslash}m{0.1\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.17\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.12\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.15\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.12\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.12\linewidth}|}
+        \rowcolor{blue!30}
+        \hline
+        \multicolumn{1}{|>{\centering\arraybackslash}m{0.1\linewidth}|}{\textbf{ID}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.17\linewidth}|}{\textbf{Memori (MB)}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.12\linewidth}|}{\textbf{RAM (MB)}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.15\linewidth}|}{\textbf{MIPS per Prosesor}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.12\linewidth}|}{\textbf{Jumlah Prosesor}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.12\linewidth}|}{\textbf{Tipe VM}} \\
+        \hline
+        VM1 & 1.000 & 512  & 400 & 1 & VM 1 \\
+        \hline
+        VM2 & 1.000 & 1.024 & 500 & 1 & VM 2 \\
+        \hline
+        VM3 & 1.000 & 2.048 & 600 & 1 & VM 3 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\newpage
+
+\begin{table} [H]
+    \centering
+    \caption{Spesifikasi \textit{host} CloudSim}
+    \label{tabel:Spesifikasi Host Simulasi}
+    \begin{tabular}{|>{\centering\arraybackslash}m{0.07\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.1\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.1\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.1\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.1\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.1\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.1\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.1\linewidth}|}
+        \rowcolor{blue!30}
+        \hline
+        \multicolumn{1}{|>{\centering\arraybackslash}m{0.07\linewidth}|}{\textbf{ID}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.1\linewidth}|}{\textbf{Memori (MB)}} &
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.1\linewidth}|}{\textbf{Jumlah \textit{Core}}} &
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.1\linewidth}|}{\textbf{Jumlah \textit{Core}}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.1\linewidth}|}{\textbf{MIPS \textit{Core} 1}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.1\linewidth}|}{\textbf{MIPS \textit{Core} 2}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.1\linewidth}|}{\textbf{MIPS \textit{Core} 3}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.1\linewidth}|}{\textbf{MIPS \textit{Core} 4}} \\
+        \hline
+        H1 & 1.000.000 & 128.000 & 4 & 300 & 400 & 500 & 600 \\
+        \hline
+        H2 & 1.000.000 & 128.000 & 4 & 300 & 400 & 500 & 600 \\
+        \hline
+        H3 & 1.000.000 & 128.000 & 4 & 300 & 400 & 500 & 600 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{table} [H]
+    \centering
+    \caption{Spesifikasi \textit{data center} CloudSim}
+    \label{tabel:Spesifikasi Data Center Simulasi}
+    \begin{tabular}{|>{\centering\arraybackslash}m{0.07\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.12\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.1\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.12\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.1\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.15\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.1\linewidth}|}
+        \rowcolor{blue!30}
+        \hline
+        \multicolumn{1}{|>{\centering\arraybackslash}m{0.07\linewidth}|}{\textbf{ID}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.12\linewidth}|}{\textbf{Memori (MB)}} &
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.1\linewidth}|}{\textbf{RAM (MB)}} &
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.12\linewidth}|}{\textbf{Jumlah Prosesor}} &
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.1\linewidth}|}{\textbf{Jumlah \textit{Host}}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.15\linewidth}|}{\textbf{\textit{Bandwidth} (Gbps)}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.1\linewidth}|}{\textbf{\textit{Latency} (ms)}}  \\
+        \hline
+        D1 & 100.000 & 128 & 6 & 3 & 10 & 6 \\
+        \hline
+        D2 & 100.000 & 128 & 6 & 3 & 10 & 6 \\
+        \hline
+        D3 & 100.000 & 128 & 6 & 3 & 10 & 8 \\
+        \hline
+        D4 & 100.000 & 128 & 6 & 3 & 10 & 8 \\
+        \hline
+        D5 & 100.000 & 128 & 6 & 3 & 10 & 10 \\
+        \hline
+        D6 & 100.000 & 128 & 6 & 3 & 10 & 10 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+
+\subsubsection{Konfigurasi Awal Implementasi \textit{Real} Arsitektur \textit{Cloud}}
+Implementasi \textit{real} arsitektur \textit{cloud} pada penelitian ini menggunakan empat buah \textit{virtual machine} (VM) yang berfungsi sebagai lingkungan uji coba. Dari keempat VM tersebut, satu VM berperan sebagai broker yang bertugas sebagai pusat kendali dalam sistem. Broker ini bertanggung jawab untuk menjalankan algoritma optimasi \textit{scheduling} yang digunakan untuk menentukan distribusi task secara efisien ke VM lainnya.
+
+Tiga VM lainnya berperan sebagai \textit{host}, yang masing-masing menjalankan dua \textit{container} berbasis Docker. Dengan konfigurasi ini, total terdapat enam \textit{container}. \textit{Container-container} ini bertugas menjalankan \textit{task} yang telah didistribusikan oleh broker. Konfigurasi ini memungkinkan simulasi lingkungan \textit{cloud} yang nyata, sehingga dapat menguji efektivitas algoritma \textit{scheduling} dalam lingkungan terdistribusi.
+
+Gambar \ref{figure:Arsitektur Implementasi Real} memperlihatkan skema arsitektur sistem secara umum yang menggambarkan hubungan antara broker dan \textit{host} serta \textit{container-container} di dalam \textit{host}. Selain itu, spesifikasi \textit{hardware} dari masing-masing VM yang digunakan pada \textit{real environment} dapat dilihat pada tabel \ref{tabel:Spesifikasi VM Real Environment} dan tabel \ref{tabel:Spesifikasi Broker dan Host Real Environment}, yang menjelaskan secara rinci konfigurasi sumber daya yang digunakan, seperti CPU, RAM, dan penyimpanan.
+
+\newpage
+
+\begin{figure} [H]
+  \includegraphics[width=1.1\linewidth]{gambar/Arsitektur Implementasi CloudSim.png}
+  \caption{Arsitektur \textit{real environment}}
+  \label{figure:Arsitektur Implementasi Real}
+\end{figure}
+
+Setiap \textit{virtual machine} dan broker memiliki spesifikasi masing-masing. Adapun spesifikasi pada tiap sumber daya yang digunakan dalam penelitian ini dapat dilihat dalam tabel \ref{tabel:Spesifikasi VM Real Environment}, dan tabel \ref{tabel:Spesifikasi Broker dan Host Real Environment}.
+
+\begin{table} [H]
+    \centering
+    \caption{Spesifikasi \textit{virtual machine real environment}}
+    \label{tabel:Spesifikasi VM Real Environment}
+    \begin{tabular}{|>{\centering\arraybackslash}m{0.15\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.20\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.15\linewidth}|}
+    \rowcolor{blue!30}
+        \hline
+        \multicolumn{1}{|>{\centering\arraybackslash}m{0.15\linewidth}|}{\textbf{ID}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.20\linewidth}|}{\textbf{RAM (MB)}} &
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.15\linewidth}|}{\textbf{CPU}} \\
+        \hline
+        VM1 & 512 & 1 \\
+        \hline
+        VM2 & 1024 & 1 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{table} [H]
+    \centering
+    \caption{Spesifikasi broker dan \textit{host real environment}}
+    \label{tabel:Spesifikasi Broker dan Host Real Environment}
+    \begin{tabular}{|>{\centering\arraybackslash}m{0.2\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.2\linewidth}|
+                    >{\raggedleft\arraybackslash}m{0.15\linewidth}|}
+    \rowcolor{blue!30}
+        \hline
+        \multicolumn{1}{|>{\centering\arraybackslash}m{0.2\linewidth}|}{\textbf{ID}} & 
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.2\linewidth}|}{\textbf{RAM (MB)}} &
+        \multicolumn{1}{>{\centering\arraybackslash}m{0.15\linewidth}|}{\textbf{CPU}} \\
+        \hline
+        Broker & 8192 & 8 \\
+        \hline
+        Host 1 & 4096 & 4 \\
+        \hline
+        Host 2 & 4096 & 4 \\
+        \hline
+        Host 3 & 4096 & 4 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\newpage
+
+\subsection{Implementasi Algoritma}
+Tahap implementasi dilakukan setelah desain dan konfigurasi sistem selesai. Pada tahap ini, \textit{pseudocode} yang telah di analisa sebelumnya diubah menjadi program yang dapat dijalankan pada platform CloudSim. Penelitian ini mengimplementasikan algoritma \textit{Artificial Bee Colony} (ABC) yang dikombinasikan dengan metode \textit{Elite Opposition-Based Learning} (EOBL). 
+
+\begin{table} [H]
+    \centering
+    \caption{\textit{Pseudocode} dari proses \textit{Artificial Bee Colony} (ABC)}
+    \begin{tabular}{|p{0.95\linewidth}|}
+    \hline
+    \textbf{Input:} Daftar tugas (\textit{task/cloudlets}) dan daftar \textit{virtual machine} (VM). \\
+    \textbf{\textit{Output}:} Solusi terbaik dari alokasi tugas. \\
+    \textbf{Langkah:} 
+    \begin{enumerate}[leftmargin=*,label=\arabic*.,itemsep=0pt,parsep=0pt]
+        \item Mulai.
+        \item Tetapkan iterasi $t = 1$.
+        \item Definisikan dimensi masalah.
+        \item Hasilkan populasi awal.
+        \item Evaluasi \textit{fitness} dari setiap individu.
+        \item \textbf{\textit{while}} kondisi terminasi belum terpenuhi \textbf{\textit{do}}
+        \item \hspace{1em} Untuk setiap lebah pekerja (\textit{employed bees}) \textbf{\textit{do}}
+        \item \hspace{2em} Temukan sumber makanan baru dan evaluasi \textit{fitness}.
+        \item \hspace{2em} Terapkan mekanisme seleksi \textit{greedy}.
+        \item \hspace{1em} \textbf{\textit{end for}}
+        \item \hspace{1em} Hitung probabilitas untuk setiap sumber makanan.
+        \item \hspace{1em} Untuk setiap lebah pengamat (\textit{onlooker bees}) \textbf{\textit{do}}
+        \item \hspace{2em} Pilih sumber makanan.
+        \item \hspace{2em} Hasilkan sumber makanan baru.
+        \item \hspace{2em} Evaluasi \textit{fitness}.
+        \item \hspace{2em} Terapkan mekanisme seleksi \textit{greedy}.
+        \item \hspace{1em} \textbf{\textit{end for}}
+        \item \hspace{1em} Fase lebah pengintai (\textit{scout bees}):
+        \item \hspace{2em} \textbf{\textit{if}} ada lebah pekerja yang menjadi lebah pengintai \textbf{then}
+        \item \hspace{3em} Kirim lebah pengintai ke sumber makanan acak.
+        \item \hspace{2em} \textbf{\textit{end if}}
+        \item \hspace{1em} Set iterasi $t = t + 1$.
+        \item \textbf{\textit{end while}}
+        \item Selesai.
+    \end{enumerate} \\
+    \hline
+    \end{tabular}
+\end{table}
+
+\newpage
+
+\begin{figure} [H] 
+  \centering
+  \includegraphics[width=0.85\linewidth]{gambar/Flowchart ABC Algorithm.png}
+  \caption{Flowchart dari \textit{Artificial Bee Colony} (ABC)}
+  \label{figure:Flowchart ABC Algorithm}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \caption{\textit{Pseudocode} proses \textit{Elite Opposition-Based Artificial Bee Colony} (ABC-EOBL)}
+    \begin{tabular}{|p{0.95\linewidth}|}
+    \hline
+    \textbf{Input:} Daftar tugas (\textit{task/cloudlets}) dan daftar \textit{virtual machine} (VM). \\
+    \textbf{\textit{Output}:} Solusi terbaik dari alokasi tugas. \\
+    \textbf{Langkah:}
+    \begin{enumerate}[leftmargin=*, label=\arabic*., itemsep=0pt, parsep=0pt]
+        \item Mulai.
+        \item Tetapkan iterasi $t = 0$.
+        \item Tetapkan evaluasi fungsi $FEs = 0$.
+        \item Inisialisasi populasi.
+        \item Evaluasi \textit{fitness} setiap individu.
+        \item \textbf{\textit{while}} ($FEs < MAX\_FEs$) \textbf{\textit{do}}
+        \item \hspace{1em} Hasilkan probabilitas acak $Pr = \text{rand}(0, 1)$.
+        \item \hspace{1em} \textbf{\textit{if}} ($Pr < P_e$) \textbf{\textit{then}}
+        \item \hspace{2em} Pilih $EN$ solusi \textit{elite} dari populasi saat ini.
+        \item \hspace{2em} Hitung batas bawah dan atas ruang pencarian.
+        \item \hspace{2em} Inisialisasi populasi \textit{elite opposition} $\mathbf{EOP} = \{\}$.
+        \item \hspace{2em} \textbf{\textit{for each}} individu $i$ dalam populasi \textbf{\textit{do}}
+        \item \hspace{3em} Hasilkan nilai acak $k = \text{rand}(0, 1)$.
+        \item \hspace{3em} Buat solusi \textit{elite opposition} $EO_i$ untuk individu $X_i$.
+        \item \hspace{3em} Evaluasi \textit{fitness} $EO_i$.
+        \item \hspace{3em} Tambahkan $EO_i$ ke populasi \textit{opposition}: $\mathbf{EOP} = \mathbf{EOP} \cup \{EO_i\}$.
+        \item \hspace{3em} Tambahkan evaluasi fungsi: $FEs = FEs + 1$.
+        \item \hspace{2em} \textbf{\textit{end for}}
+        \item \hspace{2em} Gabungkan populasi $P$ dan populasi \textit{opposition} $\mathbf{EOP}$.
+        \item \hspace{2em} Pilih $SN$ solusi terbaik untuk generasi berikutnya.
+        \item \hspace{1em} \textbf{else}
+        \item \hspace{2em} Jalankan algoritma ABC.
+        \item \hspace{1em} \textbf{\textit{end if}}
+        \item \hspace{1em} Tetapkan iterasi $t = t + 1$.
+        \item \textbf{\textit{end while}}
+        \item Kembalikan solusi terbaik yang ditemukan.
+        \item Selesai.
+    \end{enumerate} \\
+    \hline
+    \end{tabular}
+\end{table}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{gambar/Flowchart EOBL.png}
+    \caption{\textit{Flowchart Elite Opposition Based Learning}}
+    \label{figure:Flowchart EOBL}
+\end{figure}
+
+\subsection{Pengujian dan Evaluasi}
+Pengujian dilakukan setelah implementasi untuk mengukur kinerja sistem. Pengukuran parameter yang telah ditentukan dan perbandingan dengan algoritma pembanding, seperti algoritma \textit{Swarm Intellegence}, yaitu \textit{Particle Swarm Optimization} dan algoritma \textit{metaheuristik}, yaitu \textit{Genetic Algorithm} digunakan untuk evaluasi. Dibandingkan dengan metode sebelumnya, hasil penilaian digunakan untuk memastikan sistem yang dikembangkan lebih efektif, efisien, dan ideal. Perbandingan didasarkan pada beberapa parameter sesuai dengan tabel \ref{tabel:Parameter Pengujian}.
+
+\begin{table}[H]
+    \centering
+    \caption{Parameter pengujian}
+    \label{tabel:Parameter Pengujian}
+    \renewcommand{\arraystretch}{2.5}
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \rowcolor{blue!30}
+        \textbf{No} & \textbf{Parameter} & \textbf{Rumus} \\
+        \hline
+        1 & \textit{Makespan} & 
+        $\displaystyle \max_{i \in \text{\textit{tasks}}} \{F_i\}$ \\
+        \hline
+        2 & \textit{Throughput} & 
+        $\displaystyle \frac{nT}{makespan}$ \\
+        \hline
+        3 & \textit{Average Start Time} & 
+        $\displaystyle \frac{\sum_{i=1}^{n} \text{\textit{start time of} } R_i}{nR}$ \\
+        \hline
+        4 & \textit{Average Execution Time} & 
+        $\displaystyle \frac{\sum_{i=1}^{n} \text{times } T_i}{nT}$ \\
+        \hline
+        5 & \textit{Average Finish Time} & 
+        $\displaystyle \frac{\sum_{i=1}^{n} \text{\textit{finish time of} } R_i}{nR}$ \\
+        \hline
+        6 & \textit{Average Waiting Time} & 
+        $\displaystyle \frac{\text{\textit{TotalDelay}}}{n}$ \\
+        \hline
+        7 & \textit{Imbalance Degree (\%)} & 
+        $\displaystyle \frac{ET_{\max} - ET_{\min}}{ET_{\text{avg}}}$\\
+        \hline
+        8 & \textit{Scheduling Length} & 
+        \text {\textit{scheduling time}} + \textit{makespan} \\
+        \hline
+        9 & \textit{Resource Utilization (\%)} & 
+        $\displaystyle \frac{\sum_{i=1}^{n} \text{\textit{finish time of} } R_i}{\text{\textit{makespan}} \times nR}$ \\
+        \hline
+        10 & \textit{Energy Consumption} & 
+        \textit{Total energy consumption} \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\section{Bahan dan Peralatan yang digunakan}
+Penelitian ini memanfaatkan berbagai perangkat lunak dan perangkat keras untuk mendukung proses simulasi, implementasi, serta analisis hasil pengujian algoritma penjadwalan tugas di lingkungan \textit{cloud computing}. Di sisi perangkat lunak, digunakan beberapa program pendukung, antara lain:
+\begin{itemize} [nolistsep]
+    \item \textbf{Eclipse}: digunakan sebagai \textit{Integrated Development Environment (IDE)} untuk mengembangkan kode berbasis Java.
+    \item \textbf{Apache Commons Math}: \textit{library} yang berfungsi dalam komputasi matematika, termasuk analisis statistik dan optimasi.
+    \item \textbf{Microsoft Excel}: digunakan untuk visualisasi data dalam bentuk grafik serta analisis hasil simulasi.
+    \item \textbf{Python}: dimanfaatkan dalam pembuatan \textit{dataset stratified}.
+\end{itemize}
+
+Berikut adalah \textit{dataset} yang digunakan dalam penelitian ini:
+\begin{itemize} [nolistsep]
+    \item \textbf{SDSC \textit{Blue Horizon Log}}: mencakup data tugas masa lalu dari superkomputer SDSC, seperti jumlah prosesor yang digunakan, waktu mulai, dan waktu pengiriman.
+    \item \textbf{\textit{Stratified Random}}: untuk memberikan distribusi pekerjaan yang lebih merata berdasarkan rentang data SDSC, kumpulan data pengambilan sampel bertingkat dikembangkan dengan menggunakan pendekatan stratifikasi.
+    \item \textbf{\textit{Simple Random}}: skenario tugas umum yang disimulasikan dan dibuat dengan Excel dan memiliki antara 1.000 hingga 10.000 tugas.
+\end{itemize}
+
+Pada aspek perangkat keras untuk mendukung proses simulasi, pengembangan, dan implementasi, penelitian menggunakan perangkat keras dengan spesifikasi sebagai berikut:
+\begin{itemize} [nolistsep]
+    \item \textbf{Prosesor}: AMD Ryzen 5 5600U \textit{hexa-core processor}.
+    \item \textbf{Memori}: RAM 16 GB.
+    \item \textbf{Penyimpanan}: SSD 512 GB.
+    \item \textbf{Kartu Grafis}: NVIDIA GeForce RTX 3050 (4GB GDDR6).
+    \item \textbf{Sistem Operasi}: Windows 11 \textit{Home} + \textit{Office Home Student} 2021 64-bit.
+\end{itemize}
+
+Dengan pemilihan perangkat lunak dan perangkat keras yang tepat, penelitian ini menjamin bahwa proses simulasi dan implementasi berjalan lancar, menghasilkan data yang valid dan dapat diandalkan. Kombinasi alat dan bahan ini juga memungkinkan evaluasi performa algoritma penjadwalan dilakukan secara menyeluruh dan realistis, sehingga hasil penelitian dapat diaplikasikan pada kondisi nyata di lingkungan \textit{cloud computing}.
+
+\section{Implementasi}
+\subsection{Persiapan \textit{Dataset}}
+Persiapan \textit{dataset} merupakan tahap awal untuk memastikan validitas dan keakuratan simulasi penjadwalan tugas. \textit{Dataset} yang dipersiapkan terdiri dari data acak yang dihasilkan secara manual melalui Microsoft Excel, \textit{dataset} log aktivitas dari SDSC, serta data hasil pengambilan sampel stratifikasi dari \textit{dataset} SDSC. Proses pembuatan dan format penyimpanan \textit{dataset} disesuaikan agar dapat digunakan secara efektif pada simulasi.
+
+\subsubsection{\textit{Dataset Simple Random}}
+\textit{Dataset Simple Random} dibuat dengan menggunakan Microsoft Excel, memanfaatkan fungsi \textit{RANDBETWEEN} untuk menghasilkan nilai acak dalam rentang antara 10.000 hingga 40.000. Fungsi ini memastikan bahwa nilai yang dihasilkan berada dalam batas yang telah ditentukan dan dilakukan secara berulang hingga mencapai jumlah baris yang diinginkan.
+
+Proses pembuatan \textit{dataset} ini dilakukan secara bertahap, mulai dari 1.000 baris, kemudian 2.000, 3.000, hingga mencapai 10.000 baris. Setiap nilai yang dihasilkan mewakili panjang tugas (\textit{task length}) yang akan digunakan dalam simulasi penjadwalan. Setelah proses pembuatan selesai, \textit{dataset} disimpan dalam format \textit{file} teks agar dapat diintegrasikan langsung ke dalam proses simulasi penjadwalan tugas \textit{cloud}.
+
+\begin{lstlisting} [caption={Fungsi RANDBETWEEN untuk Simple Random Dataset}, label={listing:Randbetween}, language=Java]
+=RANDBETWEEN(10000, 40000)
+\end{lstlisting}
+
+Contoh fungsi yang digunakan pada Microsoft Excel terdapat pada Kode Sumber \ref{listing:Randbetween}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{gambar/Dataset Simple Random.png}
+    \caption{Contoh hasil pembuatan \textit{dataset Simple Random} menggunakan Microsoft Excel}
+    \label{figure:Dataset Simple Random}
+\end{figure}
+
+Gambar \ref{figure:Dataset Simple Random} menunjukkan hasil contoh pembuatan \textit{dataset Simple Random} menggunakan Microsoft Excel, yang kemudian diubah ke format teks untuk keperluan simulasi.
+
+\subsubsection{\textit{Dataset} SDSC (\textit{The San Diego Supercomputer Center}) \textit{Blue Horizon Logs}}
+\textit{Dataset} SDSC \textit{Blue Horizon Logs} merupakan \textit{dataset workload} yang berisi informasi mengenai pekerjaan atau tugas komputasi yang dijalankan pada sebuah superkomputer. \textit{Dataset} ini diambil dari laman SDSC dengan versi SDSC-BLUE-2000-4.2-cln, yang mencatat aktivitas tugas pada sistem \textit{Blue Horizon}.
+
+Tabel \ref{tabel:SDSC} menampilkan contoh data yang diambil secara acak dari \textit{dataset} tersebut. \textit{Dataset} ini terdiri dari berbagai kolom yang merekam detail pekerjaan, seperti jumlah prosesor yang dialokasikan, waktu CPU rata-rata yang digunakan, serta berbagai atribut tambahan. Namun, \textit{dataset} asli ini mengandung banyak nilai \textit{missing} atau anomali yang ditandai dengan angka -1 pada beberapa kolomnya, yang menunjukkan ketidaklengkapan atau kehilangan data.
+
+\begin{table} [H]
+    \centering
+    \small
+    \caption{\textit{Dataset} SDSC \textit{Blue Horizon Logs}}
+    \label{tabel:SDSC}
+    \renewcommand{\arraystretch}{1.1}
+    \begin{adjustbox}{max width=\textwidth}
+    \begin{tabular}{rrrrrrrrrrrrrrrrrr}
+    \hline
+    9 & 430593 & 13 & 50866 & 256 & 25381 & -1 & 256 & 64800 & -1 & 1 & 95 & -1 & -1 & 4 & -1 & -1 & -1 \\
+    10 & 430730 & 31 & 10770 & 256 & 5343 & -1 & 256 & 28800 & -1 & 1 & 95 & -1 & -1 & 4 & -1 & -1 & -1 \\
+    11 & 433750 & 1878 & 12701 & 256 & 6307 & -1 & 256 & 64500 & -1 & 1 & 14 & -1 & -1 & 3 & -1 & -1 & -1 \\
+    12 & 437926 & 27 & 2794 & 64 & 2601 & -1 & 64 & 60000 & -1 & 1 & 34 & -1 & -1 & 2 & -1 & -1 & -1 \\
+    \multicolumn{18}{c}{\dots} \\
+    250439 & 84590570 & 11 & 129758 & 32 & 93333 & -1 & 32 & 129600 & -1 & 5 & 126 & -1 & -1 & 3 & -1 & -1 & -1 \\
+    250440 & 84590739 & 13 & 42 & 8 & 2.12 & -1 & 8 & 7200 & -1 & 1 & 35 & -1 & -1 & 1 & -1 & -1 & -1 \\
+    \hline
+    \end{tabular}
+    \end{adjustbox}
+\end{table}
+
+Untuk memanfaatkan \textit{dataset} ini secara optimal dalam simulasi penjadwalan, dilakukan proses \textit{preprocessing} untuk membersihkan data dari nilai-nilai anomali tersebut. Setelah proses pembersihan, hanya dua kolom penting yang dipertahankan, yaitu \textit{allocated processors} dan \textit{average} CPU \textit{time used}.
+
+Selanjutnya, dari dua kolom ini dilakukan perhitungan untuk memperoleh nilai \textit{task length}, yang diperoleh dengan mengalikan jumlah prosesor yang dialokasikan dengan waktu CPU rata-rata yang digunakan. Hasil pembersihan dan pengolahan ini mengurangi jumlah data dari sekitar 243.000 baris menjadi tersisa 7.395 baris yang valid untuk digunakan.
+
+\begin{table} [H]
+    \centering
+    \caption{Hasil bersih \textit{dataset} SDSC}
+    \label{tabel:Hasil Bersih Dataset SDSC}
+    \begin{tabular}{c c c}
+    \toprule
+    \textit{Allocated Processors} & \textit{Average} CPU \textit{Time Used} & \textit{Task Length} \\
+    \midrule
+    256 & 25381   & 6497536 \\
+    256 & 5343    & 1367808 \\
+    256 & 6307    & 1614592 \\
+    64  & 2601    & 166464 \\
+    \multicolumn{1}{c}{\dots} & \multicolumn{1}{c}{\dots} & \multicolumn{1}{c}{\dots} \\
+    8   & 124.38  & 995.04 \\
+    8   & 0.25    & 2 \\
+    \bottomrule
+    \end{tabular}
+\end{table}
+
+Tabel \ref{tabel:Hasil Bersih Dataset SDSC} memperlihatkan hasil bersih \textit{dataset} SDSC setelah proses \textit{preprocessing}, yang mencakup nilai alokasi prosesor, waktu CPU yang digunakan, dan panjang \textit{task} yang akan dipakai dalam simulasi penjadwalan. Data hasil \textit{preprocessing} ini kemudian disimpan dalam format dokumen teks (.txt) untuk digunakan sebagai input pada simulasi \textit{task scheduling} di CloudSim.
+
+\subsubsection{\textit{Stratified Random}}
+\textit{Dataset Stratified Random} dibuat dengan mengamati dan menganalisis distribusi nilai dari \textit{dataset} SDSC \textit{Blue Horizon Logs}. Tahap awal dilakukan dengan menentukan nilai minimum dan maksimum dari \textit{dataset}, yang masing-masing sebesar 0,96 dan 8.783.872. Nilai ini diperoleh dengan menggunakan fungsi \textit{MIN} dan \textit{MAX} pada Microsoft Excel.
+
+Selanjutnya, rentang data tersebut dibagi menjadi 100 kelas (\textit{strata}) dengan ukuran kelas yang sama. Cara pembagiannya, yaitu dengan membagi nilai maksimum dengan jumlah kelas, sehingga diperoleh batas atas kelas sebesar 88.000 (pembulatan dari 87.839,72). Dengan demikian, kelas pertama mencakup rentang nilai dari 0 hingga 88.000, kelas kedua dari 88.000 hingga 176.000, dan seterusnya hingga kelas ke-100 yang mencakup nilai sampai batas maksimum \textit{dataset}.
+
+Setiap kelas memiliki batas bawah dan batas atas yang jelas, sehingga distribusi data menjadi lebih terstruktur dan representatif. Dari setiap kelas, dihitung persentase jumlah data terhadap total keseluruhan data pada \textit{dataset} SDSC. Persentase ini kemudian digunakan sebagai dasar untuk mengambil sampel data secara proporsional pada setiap kelas saat membuat \textit{dataset} baru dengan jumlah tertentu.
+
+Misalnya, untuk membuat \textit{dataset} baru sebanyak 1.000 data, jika kelas pertama memiliki persentase 86,27\%, maka sekitar 862 data akan diambil dari rentang nilai kelas pertama tersebut. Dengan cara ini, \textit{dataset} yang dihasilkan tetap mempertahankan karakteristik distribusi asli dari data SDSC, namun dalam jumlah yang lebih kecil dan terstruktur. Data yang telah dipilah sesuai kelas ini kemudian akan disimpan dalam \textit{file} teks (.txt) secara berurutan untuk berbagai ukuran \textit{dataset}, mulai dari 1.000, 2.000, 3.000 hingga 10.000 data.
+
+\newpage
+
+\begin{table} [H]
+    \centering
+    \caption{Contoh persebaran data \textit{stratified random}}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+    \textbf{Kelas} & \textbf{Jumlah Data Per-kelas} & \textbf{Persentase} & \textbf{Batas Atas-Bawah} \\
+    \hline
+    1   & 6.380 & 86,27\% & 0 - 88.000 \\
+    2   & 233   & 3,15\%  & 88.000 - 176.000 \\
+    3   & 101   & 1,37\%  & 176.000 - 264.000 \\
+    4   & 48    & 0,65\%  & 264.000 - 352.000 \\
+    5   & 73    & 0,99\%  & 352.000 - 440.000 \\
+    \multicolumn{1}{|c|}{\dots} & \multicolumn{1}{c|}{\dots} & \multicolumn{1}{c|}{\dots} &     \multicolumn{1}{c|}{\dots} \\
+    100 & 1    & 0,01\%  & 8.712.000 - 8.800.000 \\
+    \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Pembuatan \textit{Task Cloud Computing} Pada \textit{Real Environment}}
+Pada \textit{real environment} pada \textit{cloud computing}, \textit{task} atau tugas yang dijalankan dapat dikategorikan berdasarkan kompleksitas pemrosesan data. Dalam penelitian ini, \textit{task} dibagi menjadi tiga jenis utama, yaitu \textit{task} ringan, sedang, dan berat. Setiap jenis \textit{task} memiliki karakteristik pemrosesan dan beban yang berbeda, yang memengaruhi cara tugas-tugas ini dikelola dan dijalankan di dalam lingkungan \textit{cloud}.
+
+\subsubsection{A. \textit{Task} Ringan}
+\textit{Task} ringan dirancang untuk memiliki beban CPU yang rendah, dengan proses yang lebih cepat dan membutuhkan waktu eksekusi yang singkat. \textit{Task} ringan dapat dilihat pada kode sumber \ref{listing:Task Ringan}
+
+\begin{lstlisting} [caption={\textit{Task} ringan}, label={listing:Task Ringan}, language=Java]
+const task = req.body.task || 'ringan';
+  const db = new sqlite3.Database('./cloud_tasks.db');
+  
+  if (task === 'ringan') {
+    const startTime = Date.now()
+    db.all("SELECT name FROM products LIMIT 8000", (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      let hashTotal = 0;
+      for (let i = 0; i < 10000; i++) {
+        const val = rows[0]?.name || 'default';
+        hashTotal += crypto.createHash('md5').update(`light_${i}_${val}`).digest('hex').length;
+      }
+\end{lstlisting}
+
+Pada \textit{task} ringan ini, program akan mengambil 8.000 nama produk dari \textit{database} dan kemudian melakukan \textit{hashing} berulang sebanyak 10.000 kali. Proses ini mensimulasikan beban CPU yang lebih rendah. Pada \textit{task} ringan, waktu eksekusi tercatat lebih cepat dibandingkan dengan \textit{task} sedang dan berat. Berdasarkan hasil dari Postman, \textit{task} ringan menunjukkan waktu eksekusi yang sangat cepat, yaitu hanya 73 ms. Proses ini dirancang untuk melakukan pemrosesan yang lebih ringan dengan beban CPU yang rendah.
+
+\newpage
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{gambar/Task Ringan.png}
+    \caption{\textit{Task} ringan}
+    \label{figure:Task Ringan}
+\end{figure}
+
+\subsubsection{B. \textit{Task} Sedang}
+\textit{Task} sedang memiliki beban pemrosesan yang lebih tinggi dibandingkan dengan \textit{task} ringan. \textit{Task} sedang dapat dilihat pada kode sumber \ref{listing:Task Sedang}
+
+\begin{lstlisting} [caption={\textit{Task} sedang}, label={listing:Task Sedang}, language=Java]
+else if (task === 'sedang') {
+    const startTime = Date.now()
+    db.all("SELECT id FROM products LIMIT 10000", (err1, prodRows) => {
+      if (err1) return res.status(500).json({ error: err1.message });
+      const product_ids = prodRows.map(r => r.id);
+
+      db.all("SELECT id FROM users LIMIT 10000", (err2, userRows) => {
+        if (err2) return res.status(500).json({ error: err2.message });
+        const user_ids = userRows.map(r => r.id);
+
+        const combined_hashes = [];
+        let count = 0;
+        const max = 100000;
+
+        outer:
+        for (let p of product_ids) {
+          for (let u of user_ids) {
+            if (count >= max) break outer;
+            const str = `${p}_heavy_${u}_processing`;
+            const h = crypto.createHash('sha256').update(str).digest('hex');
+            combined_hashes.push(h);
+            count++;
+          }
+        }
+\end{lstlisting}
+
+Dalam \textit{task} ini, program menggabungkan ID produk dan ID pengguna untuk menghasilkan \textit{hash} SHA-256. Proses ini melibatkan pemrosesan lebih banyak data, dengan membatasi kombinasi pasangan ID produk dan pengguna hingga 100.000 pasangan. Pada \textit{task} sedang, waktu eksekusinya lebih lama dibandingkan dengan \textit{task} ringan, tetapi lebih cepat jika dibandingkan dengan \textit{task} berat. Berdasarkan hasil dari Postman, \textit{task} sedang ini menunjukkan waktu eksekusi tercatat sebesar 569 ms. \textit{Task} ini seimbang untuk pemrosesan data dengan beban CPU menengah.
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{gambar/Task Sedang.png}
+    \caption{\textit{Task} sedang}
+    \label{figure:Task Sedang}
+\end{figure}
+
+\subsubsection{C. \textit{Task} Berat}
+\textit{Task} berat memiliki beban pemrosesan yang paling tinggi di antara \textit{task} ringan dan sedang. \textit{Task} berat dapat dilihat pada kode sumber \ref{listing:Task Berat}
+
+\begin{lstlisting} [caption={\textit{Task} berat}, label={listing:Task Berat}, language=Java]
+else if (task === 'berat') {
+    const startTime = Date.now()
+    db.all("SELECT price FROM products ORDER BY price DESC LIMIT 10000", (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+
+      const prices = rows.map(r => r.price);
+      let total = 0;
+
+      for (let i = 0; i < 30000; i++) {
+        total += Math.floor(prices.reduce((a, b) => a + b, 0) * i % 99997);
+      }
+      const finishedTime = Date.now()
+      const executionTime = finishedTime - startTime
+
+      const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
+\end{lstlisting}
+
+Pada \textit{task} berat ini, program akan mengurutkan harga produk secara \textit{descending} dan melakukan perhitungan matematis yang intensif untuk mensimulasikan beban yang lebih berat pada CPU dan memori. \textit{Task} berat ini memiliki waktu eksekusi yang lebih lama dibandingkan dengan \textit{task} ringan dan sedang. Berdasarkan hasil dari Postman, \textit{task} berat menunjukkan rata-rata waktu eksekusi sekitar 1.97 s, yang lebih lama daripada \textit{task} ringan dan sedang hal ini menunjukkan bahwa memerlukan waktu yang lebih lama untuk menyelesaikan pemrosesan \textit{task}. Hal ini menggambarkan bagaimana beban CPU yang lebih tinggi berdampak langsung pada durasi eksekusi dalam sistem \textit{real environment}.
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{gambar/Task Berat.png}
+    \caption{\textit{Task} berat}
+    \label{figure:Task Berat}
+\end{figure}
+
+Analisis kecepatan eksekusi setiap jenis \textit{task} (ringan, sedang, dan berat) dilakukan dengan mengulang eksekusi sebanyak 10 kali iterasi. Hasil dari percobaan ini menunjukkan rata-rata waktu eksekusi untuk setiap jenis \textit{task}, yang dapat dilihat pada tabel \ref{tabel:Execution Time Task Real Environment}. Hasil rata-rata ini memberikan gambaran yang lebih jelas mengenai perbedaan performa antara \textit{task} ringan, sedang, dan berat. \textit{Task} ringan menunjukkan waktu eksekusi tercepat, sementara \textit{task} berat membutuhkan waktu eksekusi yang lebih lama, sesuai dengan kompleksitas dan beban pemrosesan yang lebih tinggi.
+
+\newpage
+
+\begin{table} [H]
+    \centering
+    \caption{Analisis \textit{execution time} pada \textit{task real environment}}
+    \label{tabel:Execution Time Task Real Environment}
+    \begin{tabular}{|>{\raggedleft\arraybackslash}m{0.1\linewidth}|
+                >{\raggedleft\arraybackslash}m{0.17\linewidth}|
+                >{\raggedleft\arraybackslash}m{0.17\linewidth}|
+                >{\raggedleft\arraybackslash}m{0.17\linewidth}|}
+    \rowcolor{blue!30}
+    \hline
+    \multicolumn{1}{|>{\centering\arraybackslash}m{0.1\linewidth}|}{\textbf{Iterasi}} & 
+    \multicolumn{1}{>{\centering\arraybackslash}m{0.17\linewidth}|}{\textbf{\textit{Task} Ringan (ms)}} & 
+    \multicolumn{1}{>{\centering\arraybackslash}m{0.17\linewidth}|}{\textbf{\textit{Task} Sedang (ms)}} & 
+    \multicolumn{1}{>{\centering\arraybackslash}m{0.17\linewidth}|}{\textbf{\textit{Task} Berat (ms)}} \\
+    \hline
+    1 & 40 & 359 & 1100 \\
+    \hline
+    2 & 39 & 296 & 1080 \\
+    \hline
+    3 & 34 & 373 & 1110 \\
+    \hline
+    4 & 30 & 323 & 1111 \\
+    \hline
+    5 & 50 & 266 & 1100 \\
+    \hline
+    6 & 42 & 334 & 978 \\
+    \hline
+    7 & 40 & 569 & 982 \\
+    \hline
+    8 & 48 & 320 & 1080 \\
+    \hline
+    9 & 73 & 372 & 1090 \\
+    \hline
+    10 & 33 & 326 & 1970 \\
+    \hline
+    \textbf{AVG} & 42,9 & 353,8 & 1160 \\
+    \hline
+    \end{tabular}
+\end{table}
+
+Ketiga macam \textit{task} ini kemudian akan diacak hingga mencapai total 1.000 \textit{task} yang harus dieksekusi dalam sistem. Setiap \textit{task} yang teracak akan dipresentasikan dalam format JSON yang berisi daftar tugas. Format ini memudahkan integrasi dengan API yang digunakan dalam pengelolaan dan eksekusi \textit{task} di broker. \textit{Task} dalam bentuk .json dapat dilihat pada gambar \ref{figure:Task JSON}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{gambar/Task pada Format .json.png}
+    \caption{\textit{Task} pada format .json}
+    \label{figure:Task JSON}
+\end{figure}
+
+Dengan menggunakan format .json, \textit{task-task} ini dapat dikirim dan diproses secara efisien dalam sistem \textit{cloud}, memanfaatkan API yang telah dikembangkan untuk mengeksekusi dan mengelola tugas-tugas tersebut di broker.
+
+\subsection{Konfigurasi \textit{Cloud Simulator}}
+\subsubsection{Pengaturan Konfigurasi pada CloudSim}
+CloudSim adalah \textit{framework} simulasi \textit{cloud computing} yang memungkinkan pemodelan dan evaluasi performa algoritma penjadwalan dalam lingkungan virtualisasi. Konfigurasi awal dilakukan pada komponen utama, yaitu \textit{cloudlet} (\textit{task}), \textit{virtual machine}, dan pengaturan \textit{host} serta \textit{data center}.
+
+\subsubsection{A. Pengaturan pada \textit{Task} atau \textit{Cloudlet} CloudSim}
+Pada simulasi ini, pengaturan \textit{task} atau \textit{cloudlet} diimplementasikan melalui fungsi \textit{createCloudlet()} yang bertugas membuat dan mengonfigurasi sejumlah \textit{cloudlet} dengan parameter-parameter tertentu. Fungsi ini mengambil dua parameter yaitu ID pengguna dan jumlah \textit{cloudlet} yang akan dibuat. Implementasi pengaturan \textit{cloudlet} dapat dilihat pada kode sumber \ref{listing:createCloudlet}
+
+\begin{lstlisting} [caption={Fungsi \textit{createCloudlet} untuk pengaturan \textit{cloudlet} CloudSim.}, label={listing:createCloudlet}, language=Java]
+private static List<Cloudlet> createCloudlet(int userId, int cloudlets) {
+        // Mendapatkan nilai panjang tugas dari file dataset
+        ArrayList<Double> randomSeed = getSeedValue(cloudlets);
+
+        LinkedList<Cloudlet> list = new LinkedList<Cloudlet>();
+
+        // Parameter cloudlet
+        long fileSize = 300; // Ukuran file input (byte)
+        long outputSize = 300; // Ukuran file output (byte)
+        int pesNumber = 1; // Jumlah CPU core yang dibutuhkan
+        UtilizationModel utilizationModel = new UtilizationModelFull();
+
+        // Membuat cloudlet dengan panjang tugas yang berbeda
+        for (int i = 0; i < cloudlets; i++) {
+            long length = 0;
+
+            if (randomSeed.size() > i) {
+                length = Double.valueOf(randomSeed.get(i)).longValue();
+            }
+
+            Cloudlet cloudlet = new Cloudlet(i, length, pesNumber, fileSize, outputSize, utilizationModel, utilizationModel, utilizationModel);
+            cloudlet.setUserId(userId);
+            list.add(cloudlet);
+        }
+        // Mengacak urutan cloudlet untuk simulasi yang lebih realistis
+        Collections.shuffle(list);
+
+        return list;
+    }
+\end{lstlisting}
+
+Setiap \textit{cloudlet} dikonfigurasi dengan beberapa parameter penting untuk simulasi komputasi awan. Setiap \textit{cloudlet} memiliki ID yang diatur secara berurutan mulai dari 0 hingga jumlah\textit{ cloudlet}-1 dan panjang instruksi (\textit{length}) dalam \textit{Million Instructions} (MI) yang diambil dari \textit{dataset} eksternal melalui fungsi \textit{getSeedValue()}. Ukuran \textit{file} input dan \textit{output} ditetapkan masing-masing sebesar 300 byte, sementara jumlah \textit{Processing Elements} (PE) yang dibutuhkan oleh setiap \textit{cloudlet} diatur sebanyak 1 PE. Semua \textit{cloudlet} menggunakan model utilisasi penuh (\textit{UtilizationModelFull}) yang menunjukkan bahwa \textit{cloudlet} akan menggunakan seluruh sumber daya yang dialokasikan selama proses eksekusi.
+
+Nilai \textit{length cloudlet} diambil dari tiga jenis \textit{dataset} berbeda yaitu SDSC, \textit{Random Simple}, dan \textit{Random Stratified} melalui fungsi \textit{getSeedValue()}. Penggunaan \textit{dataset} yang bervariasi ini memungkinkan evaluasi performa algoritma pada beban kerja yang berbeda-beda. Setelah semua \textit{cloudlet} dibuat, daftar \textit{cloudlet} diacak menggunakan \textit{Collections.shuffle()} untuk memastikan urutan eksekusi yang berbeda pada setiap pengujian, sehingga meningkatkan keandalan hasil simulasi.
+
+\textit{Cloudlet} yang telah dibuat kemudian dialokasikan ke broker dengan perintah \textit{brokersubmitCloudletList(cloudletList)} pada fungsi \textit{runSimulation()}. Broker memiliki tanggung jawab untuk meneruskan \textit{cloudlet} ke \textit{virtual machine} yang sesuai berdasarkan algoritma penjadwalan yang digunakan untuk mencari solusi terbaik dalam alokasi sumber daya komputasi awan.
+
+\subsubsection{B. Pengaturan pada \textit{Virtual Machine} CloudSim}
+Fungsi \textit{createVM()} dalam simulasi ini dirancang untuk mengatur dan menginisialisasi sejumlah \textit{virtual machine} (VM) dengan berbagai spesifikasi yang akan digunakan dalam lingkungan \textit{cloud}. Implementasi fungsi ini menerima dua parameter input, yaitu ID pengguna dan jumlah VM yang akan dibuat. Kode implementasi pengaturan VM dapat dilihat pada kode sumber \ref{listing:createVM}
+
+\begin{lstlisting} [caption={Fungsi \textit{createVM} untuk pengaturan \textit{virtual machine} CloudSim.}, label={listing:createVM}, language=Java]
+private static List<Vm> createVM(int userId, int vms) {
+        LinkedList<Vm> list = new LinkedList<Vm>();
+
+        // Parameter VM
+        long size = 10000; // Ukuran image (MB)
+        int[] ram = { 512, 1024, 2048 }; // RAM (MB) untuk setiap jenis VM
+        int[] mips = { 400, 500, 600 }; // Kecepatan processor (MIPS) untuk setiap jenis VM
+        long bw = 1000; // Bandwidth (Mb/s)
+        int pesNumber = 1; // Jumlah CPU core
+        String vmm = "Xen"; // Virtual Machine Monitor
+
+        Vm[] vm = new Vm[vms];
+
+        // Membuat VM dengan karakteristik yang berbeda-beda
+        for (int i = 0; i < vms; i++) {
+            vm[i] = new Vm(i, userId, mips[i % 3], pesNumber, ram[i % 3], bw, size, vmm, new CloudletSchedulerSpaceShared());
+            list.add(vm[i]);
+        }
+
+        return list;
+    }
+\end{lstlisting}
+
+Dalam fungsi ini, setiap VM dikonfigurasi dengan spesifikasi yang bervariasi untuk mensimulasikan lingkungan komputasi awan yang heterogen. Parameter utama yang ditetapkan meliputi ukuran \textit{image} VM sebesar 10.000 MB, kapasitas RAM yang bervariasi (512, 1024, atau 2048 MB), kecepatan pemrosesan (MIPS) yang juga bervariasi (400, 500, atau 600 MIPS), \textit{bandwidth} sebesar 1000 Mbps, dan jumlah \textit{Processing Elements} (pesNumber) sebanyak 1 unit per VM. Semua VM menggunakan Xen sebagai \textit{Virtual Machine Monitor} (VMM) dan menerapkan \textit{CloudletSchedulerSpaceShared} untuk penjadwalan \textit{cloudlet}.
+
+Fungsi ini membuat \textit{array} VM dengan ukuran sesuai parameter input lalu mengisi \textit{array} tersebut dengan VM baru yang memiliki spesifikasi berbeda. Penggunaan operator modulo (\%) pada penentuan nilai MIPS dan RAM memastikan bahwa VM akan memiliki tiga jenis spesifikasi yang berbeda yang diulang secara siklis. Hal ini berguna untuk mensimulasikan heterogenitas dalam lingkungan \textit{cloud} yang sebenarnya, di mana VM dengan spesifikasi berbeda tersedia untuk melaksanakan berbagai tugas. Setelah semua VM dibuat, daftar VM dikembalikan untuk kemudian digunakan dalam proses simulasi yang akan mengalokasikan \textit{cloudlet} ke VM yang paling optimal untuk meminimalkan waktu eksekusi dan konsumsi energi.
+
+\subsubsection{C. Pengaturan pada \textit{Host} dan \textit{Data Center} CloudSim}
+Fungsi \textit{createDatacenter()} dalam simulasi ini berperan penting untuk mengatur dan menginisialisasi \textit{data center} beserta \textit{host-host} yang ada di dalamnya. Implementasi fungsi ini menerima dua parameter, yaitu nama \textit{data center} dan ID awal untuk \textit{host}. Implementasi fungsi yang mengatur spesifikasi \textit{host} dan \textit{data center} dapat dilihat pada kode sumber \ref{createDatacenter}
+
+\begin{lstlisting} [caption=Fungsi \textit{createDatacenter} untuk pengaturan \textit{host} dan \textit{data center} CloudSim, label={createDatacenter}, language=Java]
+private static PowerDatacenter createDatacenter(String name, int hostId) {
+        // Daftar host di pusat data
+        List<PowerHost> hostList = new ArrayList<PowerHost>();
+
+        // Daftar Processing Elements (PE) untuk setiap host
+        List<Pe> peList1 = new ArrayList<Pe>();
+        
+        ... //peList2 - peList3//...
+
+        // Kecepatan PE untuk setiap host
+        int mipsunused = 300; // MIPS yang tidak digunakan
+        int mips1 = 400; // MIPS untuk host 1
+        int mips2 = 500; // MIPS untuk host 2
+        int mips3 = 600; // MIPS untuk host 3
+
+        // Menambahkan PE ke daftar PE untuk setiap host
+        peList1.add(new Pe(0, new PeProvisionerSimple(mips1))); 
+        peList1.add(new Pe(1, new PeProvisionerSimple(mips1)));
+        peList1.add(new Pe(2, new PeProvisionerSimple(mips1)));
+        peList1.add(new Pe(3, new PeProvisionerSimple(mipsunused)));
+        
+        ... //peList2 - peList3//...
+
+        // Parameter host
+        int ram = 128000; // RAM (MB)
+        long storage = 1000000; // Storage (MB)
+        int bw = 10000; // Bandwidth (Mb/s)
+        int maxpower = 117; // Konsumsi daya maksimum
+        int staticPowerPercentage = 50; // Persentase daya statis
+
+        // Membuat host dan menambahkannya ke daftar host
+        hostList.add(
+            new PowerHostUtilizationHistory(
+                hostId, new RamProvisionerSimple(ram),
+                new BwProvisionerSimple(bw),
+                storage,
+                peList1,
+                new VmSchedulerTimeShared(peList1),
+                new PowerModelLinear(maxpower, staticPowerPercentage)));
+        hostId++;
+        
+        ... // peList1 - peList2 // ...
+
+        // Karakteristik pusat data
+        String arch = "x86"; // Arsitektur
+        String os = "Linux"; // Sistem operasi
+        String vmm = "Xen"; // Virtual Machine Monitor
+        double time_zone = 10.0; // Zona waktu
+        double cost = 3.0; // Biaya penggunaan per jam
+        double costPerMem = 0.05; // Biaya per GB RAM
+        double costPerStorage = 0.1; // Biaya per GB storage
+        double costPerBw = 0.1; // Biaya per Gb/s bandwidth
+        LinkedList<Storage> storageList = new LinkedList<Storage>();
+
+        // Membuat karakteristik pusat data
+        DatacenterCharacteristics characteristics = new DatacenterCharacteristics(
+            arch, os, vmm, hostList, time_zone, cost, costPerMem, costPerStorage, costPerBw);
+
+        // Membuat pusat data
+        PowerDatacenter datacenter = null;
+        try {
+            datacenter = new PowerDatacenter(name, characteristics, new PowerVmAllocationPolicySimple(hostList), storageList, 9); 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return datacenter;
+    }
+\end{lstlisting}
+
+Dalam fungsi ini terdapat dua bagian utama, yaitu konfigurasi \textit{host} dan konfigurasi \textit{data center}. Untuk konfigurasi \textit{host}, fungsi ini membuat tiga jenis \textit{host} dengan spesifikasi yang berbeda. Setiap \textit{host} dilengkapi dengan \textit{Processing Elements} (PE) dengan kecepatan pemrosesan yang bervariasi (400, 500, dan 600 MIPS). Setiap \textit{host} memiliki empat PE, dengan tiga PE aktif dan satu PE cadangan dengan kecepatan 300 MIPS. Selain itu, setiap \textit{host} dikonfigurasi dengan kapasitas RAM sebesar 128.000 MB, penyimpanan sebesar 1.000.000 MB, dan \textit{bandwidth} sebesar 10.000 Mbps.
+
+\textit{Host-host} ini juga menggunakan model daya linear dengan daya maksimum 117 Watt dan persentase daya statis sebesar 50\%. Penggunaan model daya ini penting untuk mensimulasikan konsumsi energi dalam lingkungan \textit{cloud computing}, yang menjadi salah satu metrik evaluasi performa algoritma penjadwalan. Semua \textit{host} menggunakan aturan \textit{VmSchedulerTimeShared} untuk alokasi waktu prosesor di antara VM yang berjalan.
+
+Untuk konfigurasi \textit{data center}, fungsi ini menetapkan karakteristik seperti arsitektur "x86", sistem operasi "Linux", VMM "Xen", dan berbagai parameter biaya operasional (\textit{cost} per CPU, \textit{memory}, \textit{storage}, dan \textit{bandwidth}). \textit{Data center} menggunakan aturan \textit{PowerVmAllocationPolicySimple} untuk alokasi VM ke \textit{host}.
+
+Dalam simulasi ini, enam \textit{data center} identik dibuat dengan tiga \textit{host} per \textit{data center}. Pendekatan ini memungkinkan evaluasi performa algoritma penjadwalan dalam lingkungan \textit{cloud} yang terdistribusi dan heterogen, menyerupai infrastruktur \textit{cloud} di dunia nyata. Pengukuran konsumsi energi dari seluruh \textit{data center} kemudian digunakan sebagai salah satu metrik utama untuk mengevaluasi efisiensi algoritma penjadwalan tersebut.
+
+\subsubsection{Pengaturan Parameter Penilaian pada CloudSim}
+Konfigurasi parameter penilaian dilakukan untuk mengevaluasi performa algoritma dalam simulasi penjadwalan tugas. Pengaturan parameter penilaian ini disesuaikan dengan konfigurasi parameter pengujian yang telah ditentukan sebelumnya.
+
+\subsubsection{A. \textit{Makespan} pada CloudSim}
+\textit{Makespan} merupakan parameter yang mengukur waktu total yang diperlukan untuk menyelesaikan seluruh tugas dalam simulasi. Parameter ini diimplementasikan dengan menginisialisasi variabel \textit{makespan} bernilai 0.0, yang kemudian diperbarui dengan waktu selesai (\textit{finish time}) dari \textit{cloudlet} terakhir yang dieksekusi.
+
+Perhitungan ini dilakukan dengan mengakses properti \textit{getFinishTime()} dari \textit{cloudlet} terakhir, yang memberikan waktu penyelesaian paling akhir dari seluruh tugas.
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{makespan} CloudSim}, language=Java]
+// Inisialisasi makespan
+double makespan = 0.0;
+
+// Perhitungan makespan total dengan menambahkan finish time cloudlet terakhir
+double makespan_total = makespan + cloudlet.getFinishTime();
+
+// Menampilkan hasil makespan
+System.out.println(String.format("Makespan: %,f", makespan_total));
+\end{lstlisting}
+
+\subsubsection{B. \textit{Average Start Time} pada CloudSim}
+\textit{Average start time} merupakan parameter yang mengukur rata-rata waktu dimulainya eksekusi setiap \textit{cloudlet} dalam simulasi. Parameter ini menunjukkan kecepatan sistem dalam memulai proses tugas dan dihitung dengan menjumlahkan waktu mulai seluruh \textit{cloudlet}, kemudian membaginya dengan jumlah total \textit{cloudlet}. Implementasinya dimulai dengan menginisialisasi variabel \textit{totalStartTime} bernilai 0.0, dilanjutkan dengan iterasi melalui setiap \textit{cloudlet} untuk mengumpulkan waktu mulai menggunakan metode \textit{getExecStartTime()}.
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{average start time} CloudSim}, language=Java]
+// Inisialisasi total waktu mulai
+double totalStartTime = 0.0;
+
+// Menghitung total waktu mulai dari semua cloudlet
+for (int i = 0; i < size; i++) {
+    totalStartTime += cloudletList.get(i).getExecStartTime();
+}
+
+// Menghitung rata-rata waktu mulai
+double avgStartTime = totalStartTime / size;
+
+// Menampilkan hasil average start time
+System.out.println(String.format("Average StartTime: %,6f", avgStartTime));
+\end{lstlisting}
+
+\subsubsection{C. \textit{Average Finish Time} pada CloudSim}
+\textit{Average finish time} mengukur rata-rata waktu yang diperlukan untuk menyelesaikan seluruh \textit{cloudlet} dalam simulasi. Parameter ini menunjukkan efisiensi sistem dalam menuntaskan beban kerja komputasi dan dihitung dengan menjumlahkan waktu selesai seluruh \textit{cloudlet}, lalu membaginya dengan jumlah total \textit{cloudlet}. Implementasinya dimulai dengan menginisialisasi variabel \textit{totalTime} bernilai 0.0, dilanjutkan dengan iterasi untuk mengumpulkan waktu selesai setiap \textit{cloudlet} menggunakan \textit{getFinishTime()}. 
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{average finish time} CloudSim}, language=Java]
+// Inisialisasi total waktu selesai
+double totalTime = 0.0;
+
+// Menghitung total waktu selesai dari semua cloudlet
+for (int i = 0; i < size; i++) {
+    totalTime += cloudletList.get(i).getFinishTime();
+}
+
+// Menghitung rata-rata waktu selesai
+double avgTAT = totalTime / size;
+
+// Menampilkan hasil average finish time
+System.out.println(String.format("Average FinishTime: %,6f", avgTAT));
+\end{lstlisting}
+
+\textit{Average finish time} mengindikasikan kecepatan sistem dalam menyelesaikan tugas, efisiensi pengelolaan sumber daya, dan kemampuan menangani beban kerja.
+
+\subsubsection{D. \textit{Average Execution Time} pada CloudSim}
+\textit{Average execution time} mengukur rata-rata waktu yang diperlukan untuk menjalankan setiap \textit{cloudlet} dalam simulasi. Parameter ini menunjukkan efisiensi sistem dalam memproses beban kerja komputasi dan dihitung dengan menjumlahkan waktu eksekusi aktual seluruh \textit{cloudlet}, kemudian membaginya dengan jumlah total \textit{cloudlet}. Implementasinya dimulai dengan menginisialisasi variabel \textit{ExecTime} bernilai 0.0, dilanjutkan dengan iterasi untuk mengumpulkan waktu eksekusi setiap \textit{cloudlet} menggunakan \textit{getActualCPUTime()}. 
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{average execution time} CloudSim}, language=Java]
+// Inisialisasi total waktu eksekusi
+double ExecTime = 0.0;
+
+// Menghitung total waktu eksekusi dari semua cloudlet
+for (int i = 0; i < size; i++) {
+    ExecTime += cloudletList.get(i).getActualCPUTime();
+}
+
+// Menghitung rata-rata waktu eksekusi
+double avgExecTime = ExecTime / size;
+
+// Menampilkan hasil average execution time
+System.out.println(String.format("Average Execution Time: %,6f", avgExecTime));
+\end{lstlisting}
+
+\textit{Average execution time} menggambarkan efisiensi penggunaan sumber daya CPU, mengindikasikan kecepatan pemrosesan tugas, dan membantu evaluasi kemampuan sistem dalam menangani beban kerja komputasi.
+
+\subsubsection{E. \textit{Average Waiting Time} pada CloudSim}
+\textit{Average waiting time} mengukur rata-rata waktu yang dihabiskan \textit{cloudlet} dalam antrian sebelum diproses. Parameter ini menggambarkan efisiensi sistem dalam mengelola antrian tugas dan responsivitas terhadap permintaan eksekusi baru. Perhitungannya sederhana, yaitu dengan mengambil waktu tunggu dari \textit{cloudlet} terakhir menggunakan \textit{getWaitingTime()}, kemudian membaginya dengan jumlah total \textit{cloudlet}. 
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{average waiting time} CloudSim}, language=Java]
+// Menghitung rata-rata waktu tunggu
+double avgWT = cloudlet.getWaitingTime() / size;
+
+// Menampilkan hasil average waiting time
+System.out.println(String.format("Average Waiting time: %,6f", avgWT));
+\end{lstlisting}
+
+\textit{Average waiting time} mengindikasikan kemampuan sistem mengelola antrian, mengidentifikasi \textit{bottleneck} dalam proses penjadwalan, dan menunjukkan kecepatan respons terhadap tugas baru.
+
+\subsubsection{F. \textit{Scheduling Length} pada CloudSim}
+\textit{Scheduling length} mengukur total waktu yang diperlukan untuk menjadwalkan dan menjalankan seluruh tugas dalam simulasi. Parameter ini memberikan gambaran komprehensif tentang efisiensi sistem dengan mempertimbangkan keseluruhan proses dari waktu tunggu hingga eksekusi. Perhitungannya sederhana yaitu menjumlahkan total waktu tunggu (\textit{waitTimeSum}) dan total \textit{makespan} (\textit{makespan\_total}). Implementasinya melibatkan akumulasi waktu tunggu dari setiap \textit{cloudlet} menggunakan \textit{getWaitingTime()}, kemudian menambahkannya dengan total \textit{makespan}. 
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{scheduling length} CloudSim}, language=Java]
+// Menghitung scheduling length
+double scheduling_length = waitTimeSum + makespan_total;
+
+// Menampilkan hasil scheduling length
+Log.printLine(String.format("Scheduling Length: %,f", scheduling_length));
+\end{lstlisting}
+
+\textit{Scheduling length} menunjukkan efisiensi keseluruhan proses penjadwalan, mengidentifikasi waktu total penyelesaian beban kerja, dan mengevaluasi kemampuan sistem dalam mengoptimalkan alokasi sumber daya.
+
+\subsubsection{G. \textit{Throughput} pada CloudSim}
+\textit{Throughput} mengukur jumlah \textit{cloudlet} yang berhasil diselesaikan per satuan waktu, menggambarkan produktivitas sistem dalam menyelesaikan tugas komputasi. Perhitungannya dilakukan dengan membagi jumlah total \textit{cloudlet} dengan waktu selesai maksimum (\textit{maxFT}) dari seluruh \textit{cloudlet}. Implementasinya melibatkan pencarian waktu selesai terpanjang melalui iterasi setiap \textit{cloudlet}, membandingkan nilai \textit{getFinishTime()} dengan \textit{maxFT}, kemudian membagi jumlah \textit{cloudlet} dengan nilai \textit{maxFT} tertinggi.
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{throughput} CloudSim}, language=Java]
+// Inisialisasi waktu selesai maksimum
+double maxFT = 0.0;
+
+// Mencari waktu selesai maksimum di antara semua cloudlet
+for (int i = 0; i < size; i++) {
+    double currentFT = cloudletList.get(i).getFinishTime();
+    if (currentFT > maxFT) {
+        maxFT = currentFT;
+    }
+}
+
+// Menghitung throughput
+double throughput = size / maxFT;
+
+// Menampilkan hasil throughput
+System.out.println(String.format("Throughput: %,9f", throughput));
+\end{lstlisting}
+
+\textit{Throughput} mengindikasikan tingkat produktivitas sistem, efisiensi pemrosesan beban kinerja, dan kapasitas penanganan jumlah tugas per satuan waktu.
+
+\subsubsection{H. \textit{Resource Utilization} pada CloudSim}
+\textit{Resource utilization} mengukur efisiensi penggunaan sumber daya komputasi dalam simulasi. Parameter ini menunjukkan seberapa optimal sistem memanfaatkan sumber daya yang tersedia dan dihitung dengan membagi total waktu CPU (\textit{CPUTimeSum}) dengan hasil kali antara \textit{makespan} dan jumlah VM (54), kemudian dikonversi menjadi persentase. Implementasinya melibatkan akumulasi waktu CPU dari setiap \textit{cloudlet} menggunakan \textit{getActualCPUTime()}, pembagian dengan nilai \textit{makespan\_total} dikalikan jumlah VM, dan pengkonversian ke persentase. 
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{resource utilization} CloudSim}, language=Java]
+// Menghitung resource utilization
+double resource_utilization = (CPUTimeSum / (makespan_total * 54)) * 100;
+
+// Menampilkan hasil resource utilization
+Log.printLine(String.format("Resouce Utilization: %,f", resource_utilization));
+\end{lstlisting}
+
+\textit{Resource utilization} mengindikasikan efisiensi pemanfaatan sumber daya, membantu identifikasi \textit{underutilization} atau \textit{overutilization}, dan menunjukkan keseimbangan beban kerja antar VM.
+
+\subsubsection{I. \textit{Energy Consumption} pada CloudSim}
+\textit{Energy consumption} mengukur total energi yang digunakan oleh sistem selama simulasi. Parameter ini menggambarkan efisiensi energi dalam menjalankan dan menyelesaikan tugas komputasi, dihitung dengan menjumlahkan daya dari semua \textit{data center} dan mengkonversinya ke \textit{kilowatt-hour} (kWh). Implementasinya melibatkan akumulasi daya dari masing-masing \textit{data center} menggunakan \textit{getPower()}, kemudian mengkonversinya dari \textit{watt-second} ke kWh dengan membagi hasil penjumlahan dengan 3600 (detik dalam satu jam) dan 1000 (watt ke kilowatt). 
+
+\begin{lstlisting} [caption={Fungsi Perhitungan \textit{energy consumption} CloudSim}, language=Java]
+// Menghitung total energy consumption
+double totalEnergy = (datacenter1.getPower() + datacenter2.getPower() + datacenter3.getPower() + 
+                    datacenter4.getPower() + datacenter5.getPower() + datacenter6.getPower()) / (3600 * 1000);
+
+// Menampilkan hasil energy consumption
+Log.printLine(String.format("Total Energy Consumption: %,2f kWh", totalEnergy));
+\end{lstlisting}
+
+Energy consumption mengindikasikan efisiensi energi sistem, membantu identifikasi pemborosan daya, dan menunjukkan dampak lingkungan dari operasi \textit{cloud computing}.
+
+\subsubsection{J. \textit{Imbalance Degree} pada CloudSim}
+\textit{Imbalance degree} mengukur tingkat ketidakmerataan beban kerja antara waktu eksekusi tertinggi dan terendah pada prosesor. Parameter ini menunjukkan keseimbangan distribusi tugas antar VM dalam sistem dan dihitung dengan membagi selisih antara nilai maksimum dan minimum waktu eksekusi dengan rata-rata waktu CPU. Implementasinya memanfaatkan \textit{DoubleSummaryStatistics} dari \textit{array response\_time} untuk mendapatkan nilai maksimum dan minimum secara efisien, kemudian membagi selisihnya dengan rata-rata waktu CPU (\textit{CPUTimeSum/totalValues}). 
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{imbalance degree} CloudSim}, language=Java]
+// Mendapatkan statistik dari response_time
+DoubleSummaryStatistics stats = DoubleStream.of(response_time).summaryStatistics();
+
+// Menghitung imbalance degree
+double degree_of_imbalance = (stats.getMax() - stats.getMin()) / (CPUTimeSum / totalValues);
+
+// Menampilkan hasil imbalance degree
+System.out.println(String.format("Imbalance Degree: %,3f", degree_of_imbalance));
+\end{lstlisting}
+
+\textit{Imbalance degree} mengindikasikan keseimbangan distribusi beban kerja, membantu identifikasi \textit{bottleneck} akibat ketidakseimbangan, dan mengevaluasi efektivitas algoritma dalam menyeimbangkan beban antar VM.
+
+\subsection{Konfigurasi Implementasi \textit{Real Environment}}
+Implementasi lingkungan nyata untuk pengujian algoritma ABC dilakukan menggunakan kombinasi VirtualBox sebagai \textit{host} dan Docker untuk virtualisasi \textit{container}. Pendekatan ini dipilih untuk mensimulasikan lingkungan \textit{cloud computing} yang lebih realistis dengan kemampuan kontrol sumber daya yang lebih baik dan terukur.
+
+\subsubsection{Konfigurasi \textit{Container Virtual Machine} pada \textit{Real Environment}}
+Konfigurasi \textit{container} Docker diatur menggunakan Dockerfile yang menggunakan Node.js versi 18 sebagai \textit{base image}. Dockerfile mendefinisikan langkah-langkah pembuatan \textit{container}, instalasi dependensi dari \textit{package.json}, hingga penyalinan kode aplikasi dan perintah untuk menjalankan aplikasi. Struktur ini memastikan konsistensi \textit{environment} untuk setiap \textit{instance} aplikasi yang dijalankan.
+
+\begin{lstlisting} [caption={Dockerfile}, language=Java]
+FROM node:18
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+CMD ["node", "index.js"]
+\end{lstlisting}
+
+\textit{Container} dikelola menggunakan \textit{docker-compose.yml} yang mendefinisikan dua \textit{service} utama: vm1 dan vm2. Kedua \textit{service} ini memiliki spesifikasi \textit{resource} yang berbeda untuk mensimulasikan heterogenitas dalam lingkungan \textit{cloud}. VM1 dikonfigurasi dengan 1 CPU \textit{core} dan 512MB RAM, sementara VM2 memiliki 1 CPU \textit{core} dengan 1024MB RAM. Setiap \textit{container} memiliki \textit{port mapping} yang berbeda (31001 dan 31002) yang diarahkan ke port 3000 \textit{internal container}, memungkinkan akses dari luar \textit{container}.
+
+\begin{lstlisting} [caption={docker-compose.yml}, language=Java]
+services:
+       vm1:
+         build:
+           context: ./app
+           dockerfile: Dockerfile
+         container_name: vm1
+         ports:
+           - "31001:3000"
+         deploy:
+           resources:
+             limits:
+               cpus: '1'
+               memory: 512m
+         networks:
+           - ts-network
+  vm2:
+    # Konfigurasi serupa dengan spesifikasi berbeda
+    memory: 1024m
+    # ...
+\end{lstlisting}
+
+\subsubsection{Konfigurasi \textit{Host} dan Broker pada \textit{Real Environment}}
+Pada implementasi sistem ini, konfigurasi \textit{host} dan broker dilakukan menggunakan VirtualBox dengan sistem operasi Ubuntu. Setiap \textit{host} dan broker memiliki spesifikasi perangkat keras yang mendukung tugas komputasi awan secara efisien, yaitu CPU 4 \textit{core} dan RAM 4 GB. Broker berperan sebagai entitas utama dalam mengelola penjadwalan tugas (\textit{task scheduling}) dan mengatur interaksi antar komponen sistem yang mengkoordinasikan alokasi sumber daya ke mesin virtual. Broker dikonfigurasi dengan spesifikasi lebih tinggi, yaitu CPU 8 \textit{core} dan RAM 8 GB. Detail lebih lanjut mengenai spesifikasi \textit{host} dan broker dapat dilihat pada gambar \ref{figure:Spesifikasi Host pada Real Environment} dan gambar \ref{figure:Spesifikasi Broker Environment}.
+
+\newpage
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{gambar/Spesifikasi Host pada Real Environment.png}
+    \caption{Spesifikasi \textit{host} pada \textit{real environment}}
+    \label{figure:Spesifikasi Host pada Real Environment}
+\end{figure}
+
+\begin{figure} [H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{gambar/Spesifikasi Broker.png}
+    \caption{Spesifikasi \textit{broker} pada \textit{real environment}}
+    \label{figure:Spesifikasi Broker Environment}
+\end{figure}
+
+\subsubsection{Pengaturan Parameter Penilaian pada \textit{Real Environment}}
+\subsubsection{A. \textit{Makespan} pada \textit{Real Environment}}
+\textit{Makespan} merupakan parameter penilaian yang mengukur total waktu yang dibutuhkan untuk menyelesaikan seluruh \textit{task} dalam sistem \textit{cloud}. Dalam implementasinya, perhitungan \textit{makespan} dilakukan dengan mencatat dua \textit{timestamp} utama menggunakan fungsi \textit{Date.now():} \textit{timestamp} awal (\textit{makespanStart}) yang direkam saat \textit{task} pertama mulai diproses, dan \textit{timestamp} akhir (\textit{makespanEnd}) yang direkam saat task terakhir selesai dieksekusi. Perhitungan \textit{makespan} dilakukan dengan mengurangi \textit{makespanEnd} dengan \textit{makespanStart} untuk mendapatkan total durasi dalam milidetik, yang kemudian dikonversi ke dalam satuan detik dengan membagi hasil tersebut dengan 1000.
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{makespan} pada \textit{real environment}}, language=Java]
+// Mencatat waktu mulai saat task pertama diproses
+if (!makespanStart) makespanStart = Date.now();
+
+// Setelah semua task selesai, hitung makespan
+if (completedTasks === totalTasks) {
+  makespanEnd = Date.now();
+  const makespanDurationSec = (makespanEnd - makespanStart) / 1000;
+}
+\end{lstlisting}
+
+\subsubsection{B. \textit{Average Start Time} pada \textit{Real Environment}}
+\textit{Average start time} merupakan parameter yang mengukur rata-rata waktu dimulainya eksekusi setiap \textit{task} dalam sistem \textit{cloud}. Implementasinya dilakukan dengan mengumpulkan waktu mulai (\textit{start time}) dari setiap \textit{task} ke dalam \textit{array startTimes}, di mana waktu yang dicatat adalah relatif terhadap waktu mulai \textit{makespan}. Perhitungan \textit{average start time} dilakukan dengan menjumlahkan seluruh waktu mulai menggunakan fungsi \textit{reduce()}, kemudian membagi total tersebut dengan jumlah \textit{task} yang telah dieksekusi (\textit{startTimes.length}).
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{average start time} pada \textit{real environment}}, language=Java]
+// Mencatat waktu mulai relatif
+const relativeStartTime = startTime - makespanStart;
+startTimes.push(relativeStartTime);
+
+// Setelah semua task selesai, hitung average start time
+if (completedTasks === totalTasks) {
+  const avgStart = startTimes.reduce((a, b) => a + b, 0) / startTimes.length;
+  ...
+}
+\end{lstlisting}
+
+\subsubsection{C. \textit{Average Finish Time} pada \textit{Real Environment}}
+\textit{Average finish time} merupakan parameter yang mengukur rata-rata waktu penyelesaian seluruh \textit{task} dalam sistem \textit{cloud}. Implementasinya dilakukan dengan mencatat waktu selesai (\textit{finish time}) setiap \textit{task} yang berhasil dieksekusi ke dalam \textit{array finishTimes}, di mana waktu yang disimpan adalah relatif terhadap waktu mulai \textit{makespan}. Setiap kali sebuah \textit{task} selesai dieksekusi, sistem menyimpan \textit{timestamp} penyelesaiannya. Perhitungan \textit{average finish time} dilakukan dengan menjumlahkan seluruh waktu penyelesaian menggunakan fungsi \textit{reduce()}, kemudian membagi total tersebut dengan jumlah keseluruhan \textit{task} yang telah selesai dieksekusi (\textit{finishTimes.length}).
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{average finish time} pada \textit{real environment}}, language=Java]
+// Mencatat waktu selesai relatif
+const relativeFinishTime = finishTime - makespanStart;
+finishTimes.push(relativeFinishTime);
+
+// Setelah semua task selesai, hitung average finish time
+if (completedTasks === totalTasks) {
+  const avgFinish = finishTimes.reduce((a, b) => a + b, 0) / finishTimes.length;
+  ...
+}
+\end{lstlisting}
+
+\subsubsection{D. \textit{Average Execution Time} pada \textit{Real Environment}}
+\textit{Average execution time} merupakan parameter yang mengukur rata-rata waktu yang dibutuhkan untuk mengeksekusi setiap \textit{task} dalam sistem \textit{cloud}. Implementasinya dilakukan dengan mencatat durasi eksekusi (\textit{execution time}) setiap \textit{task} yang diproses ke dalam \textit{array executionTimes}. Waktu eksekusi ini diperoleh langsung dari \textit{response worker} setelah menyelesaikan \textit{task} dan merepresentasikan durasi aktual yang dibutuhkan \textit{worker} untuk memproses sebuah \textit{task}. Perhitungan \textit{average execution time} dilakukan dengan menjumlahkan seluruh waktu eksekusi menggunakan fungsi \textit{reduce()}, kemudian membagi total tersebut dengan jumlah \textit{task} yang telah dieksekusi (\textit{executionTimes.length}).
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{average execution time} pada \textit{real environment}}, language=Java]
+// Mendapatkan execution time dari response worker
+const execTime = response.data?.result?.execution_time || 0;
+executionTimes.push(execTime);
+
+// Setelah semua task selesai, hitung average execution time
+if (completedTasks === totalTasks) {
+  const avgExec = executionTimes.reduce((a, b) => a + b, 0) / executionTimes.length;
+  ...
+}
+\end{lstlisting}
+
+\subsubsection{E. \textit{Average Waiting Time} pada \textit{Real Environment}}
+\textit{Average waiting time} merupakan parameter yang mengukur rata-rata waktu tunggu setiap \textit{task} sebelum dieksekusi dalam sistem \textit{cloud}. Implementasinya dilakukan dengan menghitung waktu tunggu, di mana \textit{task} pertama memiliki waktu tunggu 0, sementara \textit{task-task} berikutnya memiliki waktu tunggu berdasarkan waktu penyelesaian relatif \textit{task} sebelumnya. Setiap waktu tunggu disimpan dalam \textit{array waitingTimes}. Perhitungan \textit{average waiting time} dilakukan dengan menjumlahkan seluruh waktu tunggu menggunakan fungsi \textit{reduce()} dan membaginya dengan total jumlah \textit{task} (\textit{totalTasks}).
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{average waiting time} pada \textit{real environment}}, language=Java]
+// Implementasi waiting time sesuai jurnal
+let waitingTime;
+if (completedTasks === 0) {
+  waitingTime = 0;
+} else {
+  waitingTime = lastFinishTime; // Waktu tunggu relatif terhadap awal simulasi
+}
+waitingTimes.push(waitingTime);
+
+// Update waktu penyelesaian terakhir (untuk waktu tunggu task berikutnya)
+lastFinishTime = relativeFinishTime;
+
+// Setelah semua task selesai, hitung average waiting time
+if (completedTasks === totalTasks) {
+  const totalWaitingTime = waitingTimes.reduce((a, b) => a + b, 0);
+  const avgWaitingTime = totalWaitingTime / totalTasks;
+  ...
+}
+\end{lstlisting}
+
+\subsubsection{F. \textit{Scheduling Length} pada \textit{Real Environment}}
+\textit{Scheduling length} merupakan parameter penilaian yang mengukur total waktu penyelesaian keseluruhan proses penjadwalan \textit{task}, termasuk waktu tunggu. Dalam implementasinya, perhitungan \textit{scheduling length} dilakukan dengan menjumlahkan total waktu tunggu (\textit{totalWaitingTime}) dengan total durasi pelaksanaan (\textit{makespan} dalam milidetik). Berbeda dengan \textit{makespan} yang hanya mengukur waktu dari \textit{task} pertama dimulai hingga \textit{task} terakhir selesai, \textit{scheduling length} mencakup keseluruhan waktu dari perspektif sistem termasuk waktu tunggu kumulatif semua \textit{task}. 
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{scheduling length} pada \textit{real environment}}, language=Java]
+if (completedTasks === totalTasks) {
+  // Menghitung total waktu tunggu
+  const totalWaitingTime = waitingTimes.reduce((a, b) => a + b, 0);
+  
+  // Menghitung scheduling length
+  const schedulingLength = totalWaitingTime + (makespanEnd - makespanStart);
+  ...
+}
+\end{lstlisting}
+
+\subsubsection{G. \textit{Throughput} pada \textit{Real Environment}}
+\textit{Throughput} merupakan parameter yang mengukur jumlah \textit{task} yang berhasil diselesaikan per satuan waktu dalam sistem \textit{cloud}. Implementasinya dilakukan dengan membagi total jumlah \textit{task} (\textit{totalTasks}) dengan durasi \textit{makespan} dalam satuan detik (\textit{makespanDurationSec}). Durasi \textit{makespan} dihitung dengan mengurangi waktu akhir (\textit{makespanEnd}) dengan waktu awal (\textit{makespanStart}) dan dikonversi ke dalam satuan detik.
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{throughput} pada \textit{real environment}}, language=Java]
+if (completedTasks === totalTasks) {
+  makespanEnd = Date.now();
+  const makespanDurationSec = (makespanEnd - makespanStart) / 1000;
+  const throughput = totalTasks / makespanDurationSec;
+  ...
+}
+\end{lstlisting}
+
+\subsubsection{H. \textit{Resource Utilization} pada \textit{Real Environment}}
+\textit{Resource utilization} merupakan parameter yang mengukur tingkat pemanfaatan sumber daya CPU pada sistem \textit{cloud}. Implementasinya dilakukan dengan mengumpulkan data penggunaan CPU dari setiap \textit{worker} melalui \textit{endpoint '/cpu-usage-report'} yang menerima laporan penggunaan CPU secara \textit{real-time}. Setiap \textit{worker} mengirimkan data berupa \textit{host} (identifikasi \textit{worker}) dan nilai rata-rata penggunaan CPU (\textit{avgCpu}) yang disimpan dalam \textit{array cpuUsages}. Perhitungan \textit{resource utilization} dilakukan dengan mengelompokkan data penggunaan CPU berdasarkan \textit{host} menggunakan objek \textit{grouped}, menghitung rata-rata penggunaan CPU untuk setiap \textit{host}, kemudian menghitung rata-rata keseluruhan dari semua \textit{host}.
+
+\begin{lstlisting} [caption={Fungsi perhitungan \textit{resource utilization} pada \textit{real environment}}, language=Java]
+// Endpoint untuk menerima laporan penggunaan CPU
+app.post('/cpu-usage-report', (req, res) => {
+  const { host, avgCpu } = req.body;
+  cpuUsages.push({ time: Date.now(), host, avgCpu });
+  res.json({ status: 'received' });
+});
+
+// Perhitungan resource utilization setelah semua task selesai
+if (completedTasks === totalTasks) {
+  // Mengelompokkan data CPU usage berdasarkan host
+  const grouped = {};
+  cpuUsages.forEach(entry => {
+    if (!grouped[entry.host]) grouped[entry.host] = [];
+    grouped[entry.host].push(entry.avgCpu);
+  });
+
+  // Menghitung rata-rata penggunaan CPU untuk setiap host
+  let ruSum = 0;
+  let ruCount = 0;
+  for (const host in grouped) {
+    const hostAvg = grouped[host].reduce((a, b) => a + b, 0) / grouped[host].length;
+    ruSum += hostAvg;
+    ruCount++;
+  }
+
+  // Menghitung rata-rata keseluruhan (resource utilization)
+  const resourceUtilization = ruCount > 0 ? ruSum / ruCount : 0;
+  ...
+}
+\end{lstlisting}
+
+\subsubsection{I. \textit{Imbalance Degree} pada \textit{Real Environment}}
+\textit{Imbalance degree} merupakan parameter yang mengukur tingkat ketidakseimbangan beban kerja antar \textit{worker} dalam sistem \textit{cloud}. Implementasinya dilakukan dengan mencatat waktu eksekusi kumulatif untuk setiap \textit{worker} dalam objek \textit{executionTimeByWorker}, yang diperbarui setiap kali \textit{task} selesai dieksekusi. Setelah seluruh \textit{task} selesai diproses, perhitungan \textit{imbalance degree} dilakukan dengan menghitung selisih antara waktu eksekusi kumulatif tertinggi (\textit{Tmax}) dan terendah (\textit{Tmin}) di antara semua \textit{worker}, kemudian membaginya dengan rata-rata waktu eksekusi kumulatif (\textit{Tavg}).
+
+\begin{lstlisting} [caption={Fungsi Perhitungan \textit{imbalance degree} pada \textit{real environment}}, language=Java]
+// Mencatat execution time untuk setiap worker
+if (!executionTimeByWorker[workerURL]) {
+  executionTimeByWorker[workerURL] = 0;
+}
+executionTimeByWorker[workerURL] += execTime;
+
+// Setelah semua task selesai, hitung imbalance degree
+if (completedTasks === totalTasks) {
+  const allExecs = Object.values(executionTimeByWorker);
+  const totalCPUTime = allExecs.reduce((a, b) => a + b, 0);
+  const totalValues = allExecs.length;
+  const Tavg = totalCPUTime / totalValues;
+  const Tmax = Math.max(...allExecs);
+  const Tmin = Math.min(...allExecs);
+  const imbalanceDegree = (Tmax - Tmin) / Tavg;
+  
+  ...
+}
+\end{lstlisting}
+
+\subsection{Implementasi Algoritma ABC pada CloudSim}
+\subsubsection{Implementasi Simulasi Algoritma ABC}
+Implementasi algoritma \textit{Artificial Bee Colony} (ABC) melibatkan serangkaian tahapan yang terstruktur, dimulai dari pengaturan variabel dan konstruktor untuk algoritma, dilanjutkan dengan proses inisialisasi populasi, evaluasi nilai \textit{fitness}, hingga penerapan mekanisme pencarian makanan oleh lebah yang mensimulasikan optimasi.
+
+\subsubsection{A. Pengaturan Variabel dan Konstruktor ABC pada CloudSim}
+Algoritma ABC menggunakan beberapa variabel yang mengontrol proses optimasi. Implementasi variabel-variabel utama dalam algoritma ABC dapat dilihat pada kode sumber \ref{listing:Variabel ABC CloudSim}.
+
+\begin{lstlisting} [caption={Variabel ABC pada CloudSim}, label={listing:Variabel ABC CloudSim}, language=Java]
+private int Imax; // Jumlah maksimum iterasi
+private int populationSize; // Ukuran populasi (ukuran koloni lebah)
+private int employedBeeCount; // Jumlah lebah pekerja (50% dari populasi)
+private int onlookerBeeCount; // Jumlah lebah pengamat (50% dari populasi)
+private int scoutBeeCount; // Jumlah lebah penjelajah (tepat 1)
+private double limit; // Batas untuk fase lebah penjelajah
+private int[] abandonmentCounter; // Pelacak sumber makanan yang ditinggalkan
+private double d; // Koefisien EOABC
+private boolean useEOABC; // Flag untuk mengaktifkan/menonaktifkan EOABC
+
+private List<Cloudlet> cloudletList; // Daftar cloudlet (tugas)
+private List<Vm> vmList; // Daftar VM (mesin virtual)
+
+private int numberOfDataCenters = 6; // Jumlah pusat data
+private double[] globalBestFitnesses; // Menyimpan nilai fitness terbaik untuk setiap pusat data
+private int[][] globalBestPositions; // Menyimpan posisi terbaik untuk setiap pusat data
+\end{lstlisting}
+
+Dalam implementasi ini, variabel-variabel utama meliputi parameter kontrol seperti jumlah iterasi maksimum (\textit{Imax}), ukuran populasi lebah (\textit{populationSize}), jumlah lebah pekerja (\textit{employedBeeCount}), jumlah lebah pengamat (\textit{onlookerBeeCount}), dan jumlah lebah penjelajah (\textit{scoutBeeCount}). Variabel \textit{limit} berperan penting dalam menentukan kapan sumber makanan harus ditinggalkan, sementara \textit{abandonmentCounter} melacak berapa kali sumber makanan tertentu tidak mengalami peningkatan. Parameter \textit{d} dan \textit{useEOBL} berhubungan dengan peningkatan opsional pada algoritma dasar menggunakan \textit{Elite Opposition-Based Learning}.
+
+Algoritma ABC juga memerlukan variabel untuk menyimpan informasi tentang \textit{cloudlet} dan VM, serta variabel untuk melacak solusi terbaik global seperti \textit{globalBestFitnesses} dan \textit{globalBestPositions} untuk setiap \textit{data center}. Konstruktor ABC berfungsi untuk menginisialisasi variabel-variabel dengan nilai yang sesuai.
+
+\begin{lstlisting} [caption={Konstruktor ABC pada CloudSim}, language=Java]
+public ABC(int Imax, int populationSize, double limit, double d, boolean useEOABC,
+               List<Cloudlet> cloudletList, List<Vm> vmList, int chromosomeLength) {
+        this.Imax = Imax;
+        this.populationSize = populationSize;
+        this.limit = limit;
+        this.d = d;
+        this.useEOABC = useEOABC;
+        this.cloudletList = cloudletList;
+        this.vmList = vmList;
+        
+        // Definisikan jumlah lebah sesuai dengan persyaratan
+        this.employedBeeCount = populationSize / 2; // 50% lebah pekerja
+        this.onlookerBeeCount = populationSize / 2; // 50% lebah pengamat
+        this.scoutBeeCount = 1; // Selalu 1 lebah penjelajah
+        
+        // Inisialisasi penghitung ditinggalkan untuk setiap sumber makanan
+        this.abandonmentCounter = new int[populationSize];
+        
+        // Inisialisasi penyimpanan solusi terbaik untuk setiap pusat data
+        globalBestFitnesses = new double[numberOfDataCenters];
+        globalBestPositions = new int[numberOfDataCenters][];
+
+        // Inisialisasi nilai fitness terbaik dan posisi
+        for (int i = 0; i < numberOfDataCenters; i++) {
+            globalBestFitnesses[i] = Double.NEGATIVE_INFINITY;
+            globalBestPositions[i] = null;
+        }
+    }
+\end{lstlisting}
+
+Konstruktor menerima parameter seperti jumlah iterasi maksimum, ukuran populasi, nilai batas untuk penghentian pencarian, koefisien EOBL, \textit{flag} untuk mengaktifkan EOBL, serta daftar \textit{cloudlet} dan VM. Konstuktor juga menentukan jumlah lebah pekerja dan pengamat masing-masing sebesar 50\% dari ukuran populasi, sementara jumlah lebah penjelajah selalu tepat satu sesuai dengan algoritma ABC. 
+
+\textit{Array abandonmentCounter} diinisialisasi dengan ukuran yang sama dengan populasi untuk melacak berapa kali setiap sumber makanan tidak mengalami peningkatan. \textit{Array globalBestFitnesses} dan \textit{globalBestPositions} diinisialisasi untuk menyimpan nilai \textit{fitness} terbaik dan posisi terbaik untuk setiap \textit{data center}, dengan nilai awal \textit{fitness} terbaik diatur ke \textit{Double.NEGATIVE\_INFINITY} dan posisi terbaik diatur ke \textit{null} untuk memastikan bahwa solusi awal dapat diperbarui dengan solusi yang lebih baik yang ditemukan selama proses optimasi.
+
+\subsubsection{B. Pengaturan Variabel dan Konstruktor Individual pada CloudSim}
+Dalam algoritma \textit{Artificial Bee Colony} (ABC), representasi solusi diimplementasikan melalui kelas individual yang mewakili sumber makanan yang akan dievaluasi oleh lebah. Implementasi variabel utama dalam kelas individual dapat dilihat pada kode sumber \ref{listing:Variabel Individual ABC}.
+
+\begin{lstlisting} [caption={Variabel individual ABC pada CloudSim}, label={listing:Variabel Individual ABC}, language=Java]
+public class Individual {
+    private int[] chromosome;
+    private double fitness = -1;
+}
+\end{lstlisting}
+
+Individual memiliki dua variabel utama, yaitu \textit{chromosome} yang merepresentasikan solusi dalam bentuk \textit{array} integer dan \textit{fitness} yang merepresentasikan kualitas solusi, diinisialisasi dengan nilai -1 untuk menandakan bahwa solusi belum dievaluasi. Pada algoritma ABC, kromosom berisi penugasan \textit{cloudlet} ke VM tertentu, di mana indeks \textit{array} merepresentasikan \textit{cloudlet} dan nilai pada indeks tersebut merepresentasikan VM yang ditugaskan.
+
+Kelas individual memiliki dua konstruktor untuk mendukung pembuatan individu dengan cara yang berbeda.
+
+\begin{lstlisting} [caption={Konstruktor individual ABC pada CloudSim}, language=Java]
+    public Individual(int[] chromosome) {
+        this.chromosome = chromosome;
+    }
+
+    public Individual(int chromosomeLength, int dataCenterIterator) {
+        this.chromosome = new int[chromosomeLength];
+
+        dataCenterIterator = dataCenterIterator - 1;
+        int max = 8 + 9 * dataCenterIterator;
+        int min = 0 + 9 * dataCenterIterator;
+        int range = max - min + 1;
+
+        Random random = new Random();
+
+        for (int gene = 0; gene < chromosomeLength; gene++) {
+            int rand = random.nextInt(range) + min;
+            setGene(gene, rand);
+        }
+    }
+\end{lstlisting}
+
+Konstruktor pertama menerima kromosom yang sudah ada, berguna untuk membuat salinan individu atau membuat individu baru dengan kromosom tertentu. Konstruktor kedua lebih kompleks, digunakan untuk inisialisasi acak individu baru. Konstruktor ini menerima parameter panjang kromosom dan indeks \textit{data center}, kemudian membuat kromosom dengan nilai acak dalam rentang yang ditentukan berdasarkan \textit{data center}.
+
+Dalam konstruktor ini, batas nilai kromosom ditentukan berdasarkan indeks \textit{data center} (dikurangi 1 karena penomoran dimulai dari 1 tetapi indeks \textit{array} dimulai dari 0). Nilai minimum dan maksimum dihitung untuk membatasi pengalokasian VM hanya pada VM yang ada di \textit{data center} tertentu. Misalnya, jika \textit{data center} memiliki 9 VM (0-8), maka batas untuk \textit{data center} pertama adalah 0-8, \textit{data center} kedua 9-17, dan seterusnya. Setiap gen dalam kromosom diinisialisasi dengan nilai acak dalam rentang tersebut.
+
+Selain variabel dan konstruktor, kelas individual juga memiliki berbagai metode untuk mengakses dan memodifikasi kromosom dan nilai \textit{fitness}.
+
+\begin{lstlisting} [caption={Fungsi individual metode modifikasi kromosom dan \textit{fitness} pada CloudSim}, language=Java]
+    public int[] getChromosome() {
+        return this.chromosome;
+    }
+
+    public int getChromosomeLength() {
+        return this.chromosome.length;
+    }
+
+    public void setGene(int offset, int gene) {
+        this.chromosome[offset] = gene;
+    }
+
+    public int getGene(int offset) {
+        return this.chromosome[offset];
+    }
+
+    public void setFitness(double fitness) {
+        this.fitness = fitness;
+    }
+
+    public double getFitness() {
+        return this.fitness;
+    }
+\end{lstlisting}
+
+Metode-metode ini penting untuk algoritma ABC dalam memanipulasi individu selama fase lebah pekerja, lebah pengamat, dan lebah penjelajah. Dalam fase lebah pekerja, individu dimodifikasi dengan mengubah gen tertentu. Dalam fase lebah pengamat, nilai \textit{fitness} individu digunakan untuk menentukan probabilitas seleksi. Dalam fase lebah penjelajah, individu yang tidak mengalami peningkatan diganti dengan individu baru yang dibuat secara acak.
+
+\subsubsection{C. Inisiasi Populasi pada CloudSim}
+Dalam algoritma \textit{Artificial Bee Colony} (ABC), inisialisasi populasi merupakan langkah awal yang krusial untuk membentuk kumpulan sumber makanan yang akan dievaluasi dan dioptimalkan oleh koloni lebah. Fungsi \textit{initPopulation} dalam kelas ABC bertanggung jawab untuk menciptakan populasi awal dari individu (sumber makanan) dengan nilai acak yang valid. Implementasi fungsi tersebut dapat dilihat dalam kode sumber \ref{listing:initPopulation ABC CloudSim}.
+
+\begin{lstlisting} [caption={Fungsi \textit{initPopulasi} ABC pada CloudSim}, label={listing:initPopulation ABC CloudSim}, language=Java]
+public Population initPopulation(int chromosomeLength, int dataCenterIterator) {
+        Population population = new Population(this.populationSize, chromosomeLength, dataCenterIterator);
+        return population;
+    }
+\end{lstlisting}
+
+Fungsi \textit{initPopulation} menerima dua parameter penting, yaitu \textit{chromosomeLength} yang menentukan panjang kromosom setiap individu (jumlah \textit{cloudlet} yang akan dijadwalkan per \textit{data center}) dan \textit{dataCenterIterator} yang menentukan \textit{data center} mana yang sedang ditangani. Fungsi ini membuat objek \textit{population} baru dengan ukuran populasi yang telah ditentukan sebelumnya dalam konstruktor ABC. 
+
+Untuk mendukung inisialisasi populasi, kelas \textit{population} memiliki struktur dan konstruktor seperti pada kode sumber \ref{listing:Konstruktor ABC CloudSim}.
+\begin{lstlisting} [caption={Konstruktor \textit{population} ABC pada CloudSim}, label={listing:Konstruktor ABC CloudSim}, language=Java]
+    public Individual population[];
+
+    public Population(int populationSize) {
+        this.population = new Individual[populationSize];
+    }
+
+    public Population(int populationSize, int chromosomeLength, int dataCenterIterator) {
+        this.population = new Individual[populationSize];
+
+        for (int individualCount = 0; individualCount < populationSize; individualCount++) {
+            Individual individual = new Individual(chromosomeLength, dataCenterIterator);
+            this.population[individualCount] = individual;
+        }
+    }
+\end{lstlisting}
+
+Kelas \textit{population} memiliki dua konstruktor, yaitu konstruktor pertama hanya mengalokasikan \textit{array} untuk menyimpan individu tanpa menginisialisasinya, sementara konstruktor kedua melakukan inisialisasi lengkap dengan membuat setiap individu baru menggunakan konstruktor individual yang telah dibahas sebelumnya.
+
+Pada algoritma ABC, populasi merepresentasikan kumpulan sumber makanan yang potensial, di mana setiap sumber makanan (individual) mewakili solusi kandidat untuk masalah penjadwalan \textit{cloud}. Konstruktor kedua \textit{population} memanggil konstruktor individual untuk setiap anggota populasi, memberikan parameter panjang kromosom dan \textit{data center iterator} yang sama.
+
+Seperti yang telah dijelaskan pada bagian individual, setiap individu dalam populasi memiliki kromosom yang diinisialisasi secara acak dalam batas yang ditentukan oleh \textit{data center iterator}. Hal ini memastikan bahwa setiap sumber makanan awal berada dalam ruang pencarian yang valid dan hanya mengalokasikan \textit{cloudlet} ke VM yang tersedia dalam \textit{data center} tersebut.
+
+Kelas \textit{population} juga menyediakan berbagai metode untuk mengakses dan memodifikasi individu dalam populasi.
+
+\begin{lstlisting} [caption={Fungsi \textit{population} metode modifikasi individu dalam populasi}, language=Java]
+    public Individual[] getIndividuals() {
+        return this.population;
+    }
+
+    public int size() {
+        return this.population.length;
+    }
+
+    public Individual setIndividual(int offset, Individual individual) {
+        return population[offset] = individual;
+    }
+
+    public Individual getIndividual(int offset) {
+        return population[offset];
+    }
+\end{lstlisting}
+
+Metode-metode ini digunakan dalam berbagai fase algoritma ABC untuk mengakses dan memodifikasi individu dalam populasi, seperti dalam fase lebah pekerja ketika mereka memodifikasi sumber makanan yang ada, atau dalam fase lebah penjelajah ketika sumber makanan yang tidak produktif diganti dengan yang baru.
+
+\subsubsection{D. Evaluasi \textit{Fitness} pada CloudSim}
+Evaluasi \textit{fitness} adalah komponen krusial dalam algoritma \textit{Artificial Bee Colony} (ABC) yang bertujuan untuk menilai kualitas setiap sumber makanan (solusi) dalam populasi. Pada penjadwalan \textit{cloudlet}, nilai \textit{fitness} mencerminkan seberapa efisien alokasi \textit{cloudlet} ke VM berdasarkan waktu eksekusi dan biaya. Implementasi fungsi evaluasi \textit{fitness} dalam algoritma ABC dapat dilihat pada kode sumber \ref{listing:evaluateFitness CloudSim}.
+
+\begin{lstlisting} [caption={Fungsi \textit{evaluateFitness} pada CloudSim}, label={listing:evaluateFitness CloudSim}, language=Java]
+public void evaluateFitness(Population population, int dataCenterIterator, int cloudletIteration) {
+        for (Individual individual : population.getIndividuals()) {
+            // Hitung nilai fitness untuk setiap individu
+            double fitness = calcFitness(individual, dataCenterIterator, cloudletIteration);
+            individual.setFitness(fitness);
+
+            // Perbarui solusi terbaik global jika ditemukan solusi yang lebih baik
+            int dcIndex = dataCenterIterator - 1;
+            if (fitness > globalBestFitnesses[dcIndex]) {
+                globalBestFitnesses[dcIndex] = fitness;
+                globalBestPositions[dcIndex] = individual.getChromosome().clone();
+            }
+        }
+    }
+\end{lstlisting}
+
+Fungsi \textit{evaluateFitness} menerima objek populasi, indeks \textit{data center}, dan indeks iterasi \textit{cloudlet} sebagai parameter. Untuk setiap individu dalam populasi, fungsi ini menghitung nilai \textit{fitness} dengan memanggil fungsi \textit{calcFitness}, kemudian menyimpan nilai \textit{fitness} tersebut dalam individu. Selain itu, fungsi ini juga memperbarui informasi terbaik global jika individu saat ini memiliki nilai \textit{fitness} yang lebih baik daripada yang terbaik sebelumnya untuk \textit{data center} tertentu.
+
+Perhitungan nilai \textit{fitness} dilakukan melalui fungsi \textit{calcFitness} yang mengimplementasikan logika untuk mengevaluasi kualitas solusi.
+
+\begin{lstlisting} [caption={Fungsi \textit{calculateFitness} ABC pada CloudSim}, language=Java]
+public double calcFitness(Individual individual, int dataCenterIterator, int cloudletIteration) {
+        double totalExecutionTime = 0;
+        double totalCost = 0;
+        int iterator = 0;
+        dataCenterIterator = dataCenterIterator - 1;
+
+        // Hitung waktu eksekusi total dan biaya untuk semua cloudlet
+        for (int i = 0 + dataCenterIterator * 9 + cloudletIteration * 54;
+             i < 9 + dataCenterIterator * 9 + cloudletIteration * 54; i++) {
+            int gene = individual.getGene(iterator);
+            double mips = calculateMips(gene % 9);
+
+            totalExecutionTime += cloudletList.get(i).getCloudletLength() / mips;
+            totalCost += calculateCost(vmList.get(gene % 9), cloudletList.get(i));
+            iterator++;
+        }
+
+        // Hitung fitness untuk makespan dan biaya
+        double makespanFitness = calculateMakespanFitness(totalExecutionTime);
+        double costFitness = calculateCostFitness(totalCost);
+        
+        // Gabungkan fitness makespan dan biaya
+        double fitness = makespanFitness + costFitness;
+
+        return fitness;
+    }
+\end{lstlisting}
+
+Fungsi \textit{calcFitness} merupakan inti dari evaluasi kualitas solusi dalam algoritma ABC. Fungsi ini bekerja dengan memeriksa setiap gen dalam kromosom individu yang merepresentasikan penugasan \textit{cloudlet} ke VM tertentu. Untuk setiap \textit{cloudlet}, fungsi ini mengidentifikasi VM yang ditugaskan melalui nilai gen dalam kromosom, lalu menghitung kapasitas pemrosesan (MIPS) dari VM tersebut menggunakan fungsi \textit{calculateMips}. Waktu eksekusi \textit{cloudlet} dihitung dengan membagi panjang \textit{cloudlet} (dalam \textit{Million Instructions}) dengan MIPS dari VM yang ditugaskan, sementara biaya eksekusi dihitung berdasarkan tarif VM dan waktu penggunaan melalui fungsi \textit{calculateCost}. Kedua nilai ini diakumulasikan untuk semua \textit{cloudlet} yang ditangani oleh \textit{data center} tertentu. Setelah akumulasi selesai, fungsi ini mengkonversi total waktu eksekusi dan biaya menjadi komponen \textit{fitness} melalui fungsi \textit{calculateMakespanFitness} dan \textit{calculateCostFitness}, yang mengambil kebalikan dari nilai-nilai tersebut untuk mencerminkan bahwa nilai yang lebih kecil dari waktu eksekusi dan biaya lebih diinginkan. Kedua komponen \textit{fitness} ini kemudian dijumlahkan untuk menghasilkan nilai \textit{fitness} total yang merepresentasikan kualitas keseluruhan dari solusi penjadwalan.
+
+\begin{lstlisting} [caption={Fungsi \textit{calculateMips} pada CloudSim}, language=Java]
+    private double calculateMips(int vmIndex) {
+        double mips = 0;
+        if (vmIndex % 9 == 0 || vmIndex % 9 == 3 || vmIndex % 9 == 6) {
+            mips = 400;
+        } else if (vmIndex % 9 == 1 || vmIndex % 9 == 4 || vmIndex % 9 == 7) {
+            mips = 500;
+        } else if (vmIndex % 9 == 2 || vmIndex % 9 == 5 || vmIndex % 9 == 8) {
+            mips = 600;
+        }
+        return mips;
+    }
+\end{lstlisting}
+
+Fungsi \textit{calculateMips} menentukan kapasitas komputasi VM berdasarkan indeks modulo 9, mencerminkan heterogenitas lingkungan \textit{cloud} dengan tiga tingkat performa VM: 400, 500, dan 600 MIPS. Pengaturan ini memungkinkan algoritma untuk memodelkan lingkungan \textit{cloud} yang realistis di mana VM memiliki kapasitas berbeda dan memengaruhi waktu eksekusi \textit{cloudlet} secara signifikan.
+
+\begin{lstlisting} [caption={Fungsi \textit{calculateCost} pada CloudSim}, language=Java]
+    private double calculateCost(Vm vm, Cloudlet cloudlet) {
+      double costPerMips = vm.getCostPerMips();
+      double cloudletLength = cloudlet.getCloudletLength();
+      double mips = vm.getMips();
+      double executionTime = cloudletLength / mips;
+      return costPerMips * executionTime;
+    }
+
+    private double calculateMakespanFitness(double totalExecutionTime) {
+      // Semakin tinggi makespan, semakin rendah fitness
+      return 1.0 / totalExecutionTime;
+    }
+
+    private double calculateCostFitness(double totalCost) {
+      // Semakin rendah biaya, semakin tinggi fitness
+      return 1.0 / totalCost;
+    }
+\end{lstlisting}
+
+Fungsi \textit{calculateCost}, calculateMakespanFitness, dan calculateCostFitness merupakan fungsi pendukung yang memungkinkan perhitungan nilai fitness yang komprehensif. Fungsi calculateCost menghitung biaya eksekusi cloudlet berdasarkan tarif VM per MIPS dan waktu eksekusi, sementara fungsi calculateMakespanFitness dan calculateCostFitness mengkonversi nilai waktu eksekusi dan biaya menjadi komponen fitness dengan mengambil kebalikan dari nilai-nilai tersebut, sehingga waktu eksekusi dan biaya yang lebih rendah menghasilkan nilai fitness yang lebih tinggi. Pendekatan ini memungkinkan algoritma ABC untuk mencari solusi optimal yang meminimalkan baik waktu eksekusi maupun biaya operasional.
+
+\subsubsection{E. Fase Lebah Pekerja (\textit{Employed Bee Phase}) pada CloudSim}
+Fase lebah pekerja merupakan tahap pertama dalam siklus pencarian makanan algoritma \textit{Artificial Bee Colony} (ABC), di mana lebah pekerja bertugas untuk mengeksplorasi sumber makanan yang ada dan mencoba menemukan sumber makanan baru yang lebih baik di sekitarnya. Implementasi fase lebah pekerja dalam algoritma ABC dapat dilihat pada kode sumber \ref{listing:Fase Lebah Pekerja CloudSim}.
+
+\begin{lstlisting} [caption={Fungsi fase lebah pekerja pada CloudSim}, label={listing:Fase Lebah Pekerja CloudSim}, language=Java]
+private void employedBeePhase(Population population, int dataCenterIterator, int cloudletIteration) {
+        Random random = new Random();
+        
+        System.out.println("Employed Bee Phase: Processing " + employedBeeCount + " employed bees");
+        
+        // Proses hanya untuk lebah pekerja (separuh pertama dari populasi)
+        for (int i = 0; i < employedBeeCount; i++) {
+            Individual currentBee = population.getIndividual(i);
+            
+            // Langkah 8: Temukan sumber makanan baru
+            // Buat solusi baru dengan memodifikasi solusi saat ini
+            int[] newSolution = currentBee.getChromosome().clone();
+            
+            // Pilih dimensi acak untuk dimodifikasi
+            int dimension = random.nextInt(currentBee.getChromosomeLength());
+            
+            // Pilih sumber makanan lain (tidak termasuk saat ini)
+            int partnerIndex;
+            do {
+                partnerIndex = random.nextInt(employedBeeCount);
+            } while (partnerIndex == i);
+            
+            Individual partner = population.getIndividual(partnerIndex);
+            
+            // Terapkan batas posisi
+            int minPosition = (dataCenterIterator - 1) * 9;
+            int maxPosition = ((dataCenterIterator) * 9) - 1;
+            
+            // Hitung posisi baru menggunakan rumus ABC: vij = xij + ij(xij - xkj)
+            int phi = random.nextInt(3) - 1; // Nilai acak antara -1, 0, 1
+            int newValue = currentBee.getGene(dimension) + phi * (currentBee.getGene(dimension) - partner.getGene(dimension));
+            
+            // Pastikan posisi baru berada dalam batas
+            if (newValue < minPosition) {
+                newValue = minPosition;
+            } else if (newValue > maxPosition) {
+                newValue = maxPosition;
+            }
+            
+            newSolution[dimension] = newValue;
+            
+            // Buat solusi baru dan evaluasi
+            Individual newBee = new Individual(newSolution);
+            double newFitness = calcFitness(newBee, dataCenterIterator, cloudletIteration);
+            newBee.setFitness(newFitness);
+            
+            // Langkah 9: Terapkan mekanisme seleksi greedy
+            // Jika lebih baik, gantikan solusi saat ini
+            if (newFitness > currentBee.getFitness()) {
+                population.setIndividual(i, newBee);
+                abandonmentCounter[i] = 0; // Reset penghitung ditinggalkan
+                
+                // Perbarui solusi terbaik global jika diperlukan
+                int dcIndex = dataCenterIterator - 1;
+                if (newFitness > globalBestFitnesses[dcIndex]) {
+                    globalBestFitnesses[dcIndex] = newFitness;
+                    globalBestPositions[dcIndex] = newBee.getChromosome().clone();
+                }
+            } else {
+                // Tingkatkan penghitung ditinggalkan untuk sumber makanan ini
+                abandonmentCounter[i]++;
+            }
+        }
+    }
+\end{lstlisting}
+
+Fungsi \textit{employedBeePhase} mengimplementasikan proses pencarian makanan oleh lebah pekerja, yang merupakan analogi untuk eksplorasi solusi dalam ruang pencarian algoritma ABC. Proses ini hanya melibatkan setengah pertama dari populasi, yang merepresentasikan lebah pekerja. Untuk setiap lebah pekerja, fungsi ini membuat solusi baru dengan memodifikasi solusi yang ada. Pertama, fungsi mengkloning kromosom lebah saat ini dan memilih dimensi acak (indeks gen) yang akan dimodifikasi. Kemudian, fungsi memilih lebah pekerja lain secara acak sebagai partner untuk perhitungan posisi baru. Batasan posisi ditentukan berdasarkan \textit{data center} yang sedang diproses, memastikan bahwa posisi baru tetap valid dalam konteks penjadwalan.
+
+Perhitungan posisi baru menggunakan formula ABC $v_{mi} = x_{mi} + \varphi_{mi} \cdot (x_{mi} - x_{ki})$, di mana $x_{mi}$ adalah posisi saat ini, $x_{ki}$ adalah posisi partner, dan $\varphi_{mi}$ adalah koefisien acak (dalam implementasi ini, nilai random antara -1, 0, atau 1). Formula ini memungkinkan lebah untuk mengeksplorasi sekitar posisi saat ini dengan memanfaatkan perbedaan antara posisi saat ini dan posisi lebah lain. Setelah nilai baru dihitung, dilakukan pemeriksaan untuk memastikan bahwa nilai tersebut berada dalam batasan yang valid.
+
+Setelah solusi baru dibuat, nilai \textit{fitness}-nya dihitung menggunakan fungsi \textit{calcFitness}. Selanjutnya mekanisme seleksi \textit{greedy} diterapkan, jika solusi baru memiliki nilai \textit{fitness} yang lebih tinggi daripada solusi saat ini, solusi baru menggantikan solusi saat ini, dan penghitung \textit{abandonment} direset. Jika tidak, penghitung \textit{abandonment} untuk sumber makanan tersebut ditingkatkan, menandakan bahwa sumber makanan tersebut semakin dekat untuk ditinggalkan. Jika solusi baru lebih baik dari solusi terbaik global untuk \textit{data center} tertentu, solusi terbaik global juga diperbarui.
+
+Fase lebah pekerja memungkinkan eksplorasi lokal di sekitar solusi yang ada, yang dapat mengarah ke penemuan solusi yang lebih baik. Lebah pekerja memodifikasi solusi yang ada secara bertahap untuk mencoba meningkatkan kualitasnya, dan informasi yang mereka kumpulkan kemudian digunakan oleh lebah pengamat untuk memilih sumber makanan yang menjanjikan.
+
+\subsubsection{F. Fase Lebah Pengamat (\textit{Onlooker Bee Phase}) pada CloudSim}
+Fase lebah pengamat merupakan tahap kedua dalam \textit{Artificial Bee Colony} (ABC), di mana lebah pengamat memilih sumber makanan berdasarkan kualitasnya (nilai \textit{fitness}) yang telah ditemukan oleh lebah pekerja, kemudian berupaya meningkatkan solusi tersebut. Implementasi fase ini dimulai dengan perhitungan probabilitas untuk setiap sumber makanan.
+
+\begin{lstlisting} [caption={Fungsi \textit{calculateProbabilities} pada CloudSim}, language=Java]
+private double[] calculateProbabilities(Population population) {
+        double[] probabilities = new double[populationSize];
+        double fitnessSum = 0;
+        
+        // Jumlahkan nilai fitness
+        for (int i = 0; i < employedBeeCount; i++) {
+            fitnessSum += population.getIndividual(i).getFitness();
+        }
+        
+        // Hitung probabilitas untuk setiap sumber makanan
+        for (int i = 0; i < populationSize; i++) {
+            if (i < employedBeeCount && fitnessSum > 0) {
+                probabilities[i] = population.getIndividual(i).getFitness() / fitnessSum;
+            } else {
+                probabilities[i] = 0; // Lebah non-pekerja mendapat probabilitas nol
+            }
+        }
+        
+        return probabilities;
+    }
+\end{lstlisting}
+
+Fungsi \textit{calculateProbabilities} menghitung probabilitas untuk setiap sumber makanan berdasarkan nilai \textit{fitness} relatifnya. Probabilitas ini digunakan oleh lebah pengamat untuk memilih sumber makanan yang akan mereka eksplorasi. Sumber makanan dengan \textit{fitness} lebih tinggi mendapatkan probabilitas lebih besar, mendorong lebah pengamat untuk mengeksplorasi solusi yang menjanjikan. Ini merepresentasikan mekanisme seleksi berbasis kualitas dalam algoritma ABC. Setelah probabilitas dihitung, fase lebah pengamat diimplementasikan dalam fungsi kode sumber \ref{listing:Fase Lebah Pengamat CloudSim}.
+
+\begin{lstlisting} [caption={Fungsi \textit{onlookerBeePhase} pada CloudSim}, label={listing:Fase Lebah Pengamat CloudSim}]
+private void onlookerBeePhase(Population population, double[] probabilities, int dataCenterIterator, int cloudletIteration) {
+        Random random = new Random();
+        
+        System.out.println("Onlooker Bee Phase: Processing " + onlookerBeeCount + " onlooker bees");
+        
+        // Indeks awal untuk lebah pengamat
+        int onlookerStartIndex = employedBeeCount;
+        
+        // Proses lebah pengamat
+        int onlookerCount = 0;
+        
+        while (onlookerCount < onlookerBeeCount) {
+            // Langkah 13: Pilih sumber makanan berdasarkan probabilitas
+            int selectedFoodSource = selectFoodSource(probabilities);
+            
+            // Langkah 14: Hasilkan sumber makanan baru
+            Individual selectedBee = population.getIndividual(selectedFoodSource);
+            int[] newSolution = selectedBee.getChromosome().clone();
+            
+            // Pilih dimensi acak untuk dimodifikasi
+            int dimension = random.nextInt(selectedBee.getChromosomeLength());
+            
+            // Pilih sumber makanan lain (tidak termasuk saat ini)
+            int partnerIndex;
+            do {
+                partnerIndex = random.nextInt(employedBeeCount);
+            } while (partnerIndex == selectedFoodSource);
+            
+            Individual partner = population.getIndividual(partnerIndex);
+            
+            // Terapkan batas posisi
+            int minPosition = (dataCenterIterator - 1) * 9;
+            int maxPosition = ((dataCenterIterator) * 9) - 1;
+            
+            // Hitung posisi baru menggunakan rumus: vij = xij + ij(xij - xkj)
+            int phi = random.nextInt(3) - 1; // Nilai acak antara -1, 0, 1
+            int newValue = selectedBee.getGene(dimension) + 
+                           phi * (selectedBee.getGene(dimension) - partner.getGene(dimension));
+            
+            // Pastikan posisi baru berada dalam batas
+            if (newValue < minPosition) {
+                newValue = minPosition;
+            } else if (newValue > maxPosition) {
+                newValue = maxPosition;
+            }
+            
+            newSolution[dimension] = newValue;
+            
+            // Langkah 15: Evaluasi fitness
+            Individual newBee = new Individual(newSolution);
+            double newFitness = calcFitness(newBee, dataCenterIterator, cloudletIteration);
+            newBee.setFitness(newFitness);
+            
+            // Simpan solusi baru di bagian lebah pengamat dari populasi
+            int onlookerIndex = onlookerStartIndex + onlookerCount;
+            population.setIndividual(onlookerIndex, newBee);
+            
+            // Langkah 16: Terapkan mekanisme seleksi greedy
+            if (newFitness > selectedBee.getFitness()) {
+                // Jika lebih baik, gantikan sumber makanan asli - menunjukkan "umpan balik positif"
+                population.setIndividual(selectedFoodSource, newBee);
+                abandonmentCounter[selectedFoodSource] = 0; // Reset penghitung ditinggalkan
+                
+                // Perbarui solusi terbaik global jika diperlukan
+                int dcIndex = dataCenterIterator - 1;
+                if (newFitness > globalBestFitnesses[dcIndex]) {
+                    globalBestFitnesses[dcIndex] = newFitness;
+                    globalBestPositions[dcIndex] = newBee.getChromosome().clone();
+                }
+            } else {
+                // Jika tidak lebih baik, tingkatkan penghitung ditinggalkan - menunjukkan "umpan balik negatif"
+                abandonmentCounter[selectedFoodSource]++;
+            }
+            
+            onlookerCount++;
+        }
+    }
+\end{lstlisting}
+
+Fungsi \textit{onlookerBeePhase} menangani proses pemilihan dan modifikasi solusi oleh lebah pengamat. Berbeda dengan fase lebah pekerja yang mengeksplorasi semua sumber makanan secara merata, lebah pengamat memilih sumber makanan secara probabilistik berdasarkan kualitasnya. Pemilihan sumber makanan dilakukan melalui fungsi \textit{selectFoodSource}, yang mengimplementasikan metode \textit{roulette wheel selection} berdasarkan probabilitas yang dihitung sebelumnya.
+
+\begin{lstlisting} [caption={Fungsi \textit{selectFoodSource} pada CloudSim}, language=Java]
+private int selectFoodSource(double[] probabilities) {
+        Random random = new Random();
+        double r = random.nextDouble();
+        double sum = 0;
+        
+        // Seleksi roda roulette klasik
+        for (int i = 0; i < employedBeeCount; i++) {
+            sum += probabilities[i];
+            if (r <= sum) {
+                return i;
+            }
+        }
+        
+        // Fallback - kembalikan lebah pekerja acak
+        return random.nextInt(employedBeeCount);
+    }
+\end{lstlisting}
+
+Setelah memilih sumber makanan, lebah pengamat mencoba meningkatkan solusinya dengan cara yang mirip dengan lebah pekerja, yaitu memilih dimensi acak untuk dimodifikasi, memilih partner acak, dan menerapkan formula perubahan posisi ABC. Perbedaan utamanya adalah bahwa lebah pengamat lebih cenderung memilih sumber makanan dengan \textit{fitness} tinggi, sehingga meningkatkan eksploitasi area yang menjanjikan dalam ruang pencarian.
+
+Setelah solusi baru dibuat dan dievaluasi, mekanisme seleksi \textit{greedy} diterapkan, jika solusi baru lebih baik dari solusi asli, solusi baru menggantikan solusi asli, dan penghitung \textit{abandonment} direset. Jika tidak, penghitung \textit{abandonment} ditingkatkan, yang akan digunakan dalam fase lebah penjelajah nantinya. Jika solusi baru lebih baik dari solusi terbaik global untuk \textit{data center} tertentu, solusi terbaik global juga diperbarui.
+
+Fase lebah pengamat memperkuat aspek eksploitasi dari algoritma ABC. Dengan fokus pada sumber makanan yang menjanjikan (solusi dengan \textit{fitness} tinggi), algoritma dapat memperdalam pencarian di area yang lebih potensial dalam ruang pencarian. Mekanisme ini mencerminkan proses alami di mana lebah lebih tertarik pada bunga dengan nektar yang lebih melimpah. Kombinasi fase lebah pekerja (yang menekankan eksplorasi) dan fase lebah pengamat (yang menekankan eksploitasi) memungkinkan algoritma ABC menyeimbangkan eksplorasi dan eksploitasi, yang merupakan aspek penting dalam algoritma optimasi.
+
+\subsubsection{G. Fase Lebah Penjelajah (\textit{Scout Bee Phase}) pada CloudSim}
+Fase lebah penjelajah merupakan tahap ketiga dan terakhir dalam siklus utama algoritma \textit{Artificial Bee Colony }(ABC), di mana lebah penjelajah bertugas untuk menemukan sumber makanan baru ketika sumber yang ada telah ditinggalkan karena tidak produktif lagi. Fase ini memastikan keseimbangan antara eksplorasi dan eksploitasi dalam algoritma ABC. Implementasi fase lebah penjelajah dapat dilihat dari kode sumber \ref{listing:Fase Lebah Penjelajah CloudSim}.
+
+\begin{lstlisting} [caption={Fungsi \textit{scoutBeePhase} pada CloudSim}, label={listing:Fase Lebah Penjelajah CloudSim},language=Java]
+private void scoutBeePhase(Population population, int dataCenterIterator, int cloudletIteration) {
+        
+        // Temukan sumber makanan yang paling banyak ditinggalkan
+        int maxAbandonmentIndex = -1;
+        int maxAbandonmentCount = -1;
+        
+        for (int i = 0; i < employedBeeCount; i++) {
+            if (abandonmentCounter[i] > maxAbandonmentCount) {
+                maxAbandonmentCount = abandonmentCounter[i];
+                maxAbandonmentIndex = i;
+            }
+        }
+        
+        // Langkah 20: Jika sumber makanan yang paling ditinggalkan melebihi batas, kirim lebah penjelajah ke sumber makanan acak
+        if (maxAbandonmentCount > limit && maxAbandonmentIndex >= 0) {
+            System.out.println("Food source at position " + maxAbandonmentIndex + 
+                              " abandoned after " + maxAbandonmentCount + " trials (limit: " + limit + ")");
+            System.out.println("Scout bee is exploring for new food source");
+            
+            // Buat solusi acak yang benar-benar baru (Lebah penjelajah menjelajahi area baru)
+            Individual scout = new Individual(population.getIndividual(maxAbandonmentIndex).getChromosomeLength(), 
+                                             dataCenterIterator);
+            
+            // Evaluasi solusi baru
+            double scoutFitness = calcFitness(scout, dataCenterIterator, cloudletIteration);
+            scout.setFitness(scoutFitness);
+            
+            // Gantikan sumber makanan yang ditinggalkan
+            population.setIndividual(maxAbandonmentIndex, scout);
+            abandonmentCounter[maxAbandonmentIndex] = 0;
+            
+            System.out.println("Scout bee found new food source with fitness: " + scoutFitness);
+            
+            // Perbarui solusi terbaik global jika diperlukan - menunjukkan "Interaksi Berganda"
+            int dcIndex = dataCenterIterator - 1;
+            if (scoutFitness > globalBestFitnesses[dcIndex]) {
+                globalBestFitnesses[dcIndex] = scoutFitness;
+                globalBestPositions[dcIndex] = scout.getChromosome().clone();
+                System.out.println("New food source is better than current best - information shared with colony");
+            }
+        } else {
+            System.out.println("No food sources abandoned this iteration");
+        }
+    }
+\end{lstlisting}
+
+Fungsi \textit{scoutBeePhase} menjalankan tahap penjelajahan dalam algoritma ABC. Proses ini dimulai dengan mencari sumber makanan yang paling banyak ditinggalkan, yaitu solusi yang tidak mengalami perbaikan setelah beberapa kali percobaan modifikasi oleh lebah pekerja dan pengamat. Algoritma memeriksa setiap sumber makanan (yang direpresentasikan oleh lebah pekerja) dan mengidentifikasi yang memiliki penghitung \textit{abandonment} tertinggi.
+
+Jika penghitung \textit{abandonment} dari sumber makanan yang paling ditinggalkan melebihi batas (\textit{limit}), maka sumber makanan tersebut dianggap tidak produktif lagi dan akan ditinggalkan. Pada titik ini, lebah penjelajah bertugas untuk menemukan sumber makanan baru. Berbeda dengan lebah pekerja dan pengamat yang memodifikasi solusi yang ada, lebah penjelajah menghasilkan solusi yang benar-benar baru secara acak dalam ruang pencarian, tanpa terpengaruh oleh solusi yang ada.
+
+Implementasi ini menciptakan individu baru dengan menggunakan konstruktor individual yang menginisialisasi kromosom secara acak. Setelah solusi baru dihasilkan, nilai \textit{fitness}-nya dievaluasi dengan fungsi \textit{calcFitness}, dan solusi baru ini menggantikan solusi yang ditinggalkan. Penghitung \textit{abandonment} untuk posisi ini kemudian direset ke nol. Jika solusi baru memiliki nilai \textit{fitness} yang lebih baik dari solusi terbaik global untuk \textit{data center} tertentu, solusi terbaik global juga diperbarui.
+
+Fase lebah penjelajah sangat penting untuk menjaga keberagaman dalam populasi dan mencegah konvergensi prematur. Fase ini menemukan solusi baru secara acak ke dalam populasi sehingga algoritma ABC dapat menjelajahi area baru dalam ruang pencarian yang mungkin mengandung solusi yang lebih baik. Hal ini menjaga keseimbangan antara eksplorasi (mencari solusi baru di area yang belum dieksplorasi) dan eksploitasi (memperbaiki solusi yang ada) dalam algoritma. Fase ini juga menunjukkan karakteristik \textit{self-organizing} dari koloni lebah, di mana sumber makanan yang tidak produktif secara alami ditinggalkan dan sumber baru dicari.
+
+\subsubsection{H. Implementasi pada CloudSim}
+Untuk mengintegrasikan algoritma ABC dengan CloudSim, kode dalam \textit{CloudSimulationABC.java} mengimplementasikan logika penjadwalan yang menggunakan algoritma ABC untuk mengoptimalkan alokasi \textit{cloudlet} ke VM. Implementasi ABC pada CloudSim terdapat dalam kode sumber \ref{listing:run Simulation CloudSim}.
+
+\begin{lstlisting} [caption={Fungsi \textit{runSimulation} pada CloudSim}, label={listing:run Simulation CloudSim}, language=Java]
+private static void runSimulation(int trialNum) throws Exception {
+        // Jumlah pengguna dalam simulasi
+        int num_user = 1;
+        Calendar calendar = Calendar.getInstance();
+        boolean trace_flag = false;
+
+        // Inisialisasi CloudSim
+        CloudSim.init(num_user, calendar, trace_flag);
+
+        // Inisialisasi variabel hostId untuk pembuatan pusat data
+        int hostId = 0;
+
+        // Membuat enam pusat data dengan karakteristik yang sama
+        datacenter1 = createDatacenter("DataCenter_1", hostId);
+        hostId = 3;
+        ...//Datacenter 1 - Datacenter 2//...
+
+        // Membuat broker data center yang mengelola VM dan cloudlet
+        DatacenterBroker broker = createBroker();
+        int brokerId = broker.getId();
+        int vmNumber = 54; // Jumlah total mesin virtual
+        
+        // Menentukan jumlah cloudlet berdasarkan jenis dataset
+        int cloudletNumber;
+        if (DATASET_TYPE.equals("SDSC")) {
+            cloudletNumber = 7395; // SDSC memiliki ukuran tetap
+        } else {
+            // Untuk RandSimple dan RandStratified
+            cloudletNumber = DATASET_SIZE * 1000;
+        }
+        
+        Log.printLine("Running simulation with " + DATASET_TYPE + " dataset, " + cloudletNumber + " cloudlets");
+
+        // Membuat VM dan cloudlet
+        vmlist = createVM(brokerId, vmNumber);
+        cloudletList = createCloudlet(brokerId, cloudletNumber);
+
+        // Mengirimkan VM dan cloudlet ke broker
+        broker.submitVmList(vmlist);
+        broker.submitCloudletList(cloudletList);
+
+        // Menghitung jumlah iterasi cloudlet berdasarkan jumlah VM
+        int cloudletLoopingNumber = cloudletNumber / vmNumber - 1;
+
+\end{lstlisting}
+
+Dalam implementasi algoritma ABC pada CloudSim, integrasi dilakukan dengan memberikan peran penting pada dua variabel iterasi, yaitu \textit{cloudletIterator} dan \textit{dataCenterIterator}. Kode dalam \textit{runSimulation} melakukan inisialisasi lingkungan \textit{cloud} dengan enam \textit{data center}, setiap \textit{data center} memiliki tiga \textit{host} dengan spesifikasi yang berbeda-beda. Parameter simulasi mencakup konfigurasi \textit{dataset} yang digunakan (SDSC, \textit{Random Simple}, atau \textit{Random Stratified}) dan jumlah \textit{cloudlet} yang akan diproses.
+
+\begin{lstlisting} [caption={Pengaturan implementasi ABC pada CloudSim}, language=Java]
+// Iterasi untuk setiap batch cloudlet
+        for (int cloudletIterator = 0; cloudletIterator <= cloudletLoopingNumber; cloudletIterator++) {
+            System.out.println("Cloudlet Iteration Number " + cloudletIterator);
+
+            // Iterasi untuk setiap pusat data
+            for (int dataCenterIterator = 1; dataCenterIterator <= 6; dataCenterIterator++) {
+                
+                // Parameter untuk algoritma ABC
+                int Imax = MAX_ITERATIONS; // Iterasi maksimum
+                int populationSize = POPULATION_SIZE; // Ukuran populasi lebah
+                
+                // Dalam algoritma ABC, "dimensi" mengacu pada jumlah variabel keputusan dalam solusi
+                // Dalam kasus kita, setiap pusat data memproses 9 cloudlet sekaligus
+                int dimensions = 9; // Setiap pusat data memproses 9 cloudlet
+                
+                // Parameter "limit" menentukan kapan sumber makanan harus ditinggalkan
+                // Dalam literatur ABC, ini biasanya dihitung sebagai:
+                // limit = 0.5 * (jumlah lebah pekerja * dimensi)
+                double limit = 0.6 * (populationSize/2) * dimensions;
+                
+                // Koefisien EOABC (peningkatan opsional)
+                double d = EOABC_COEFFICIENT;
+            
+                // Inisialisasi algoritma ABC
+                ABC abc = new ABC(Imax, populationSize, limit, d, USE_EOABC, cloudletList, vmlist, cloudletNumber);
+
+                // Inisialisasi populasi
+                System.out.println("Datacenter " + dataCenterIterator + " Population Initialization");
+                Population population = abc.initPopulation(cloudletNumber, dataCenterIterator);
+
+                // Menjalankan algoritma ABC
+                abc.runABCAlgorithm(population, dataCenterIterator, cloudletIterator);
+
+                // Mendapatkan solusi terbaik
+                int[] bestSolution = abc.getBestVmAllocationForDatacenter(dataCenterIterator);
+                double bestFitness = abc.getBestFitnessForDatacenter(dataCenterIterator);
+                
+                System.out.println("Best solution found for datacenter " + dataCenterIterator + 
+                                  " with fitness " + bestFitness);
+
+                // Menetapkan tugas ke VM berdasarkan solusi terbaik
+                for (int assigner = 0 + (dataCenterIterator - 1) * 9 + cloudletIterator * 54;
+                     assigner < 9 + (dataCenterIterator - 1) * 9 + cloudletIterator * 54; assigner++) {
+                    int vmId = bestSolution[assigner - (dataCenterIterator - 1) * 9 - cloudletIterator * 54];
+                    broker.bindCloudletToVm(assigner, vmId);
+                }
+                
+
+            }
+        }
+\end{lstlisting}
+
+Algoritma menggunakan \textit{nested loops} untuk mengiterasi melalui kelompok \textit{cloudlet} dan \textit{data center}. Untuk setiap kombinasi \textit{cloudlet iteration} dan \textit{data center}, algoritma ABC diinisialisasi dengan parameter yang telah ditentukan, seperti jumlah iterasi maksimum (\textit{Imax}), ukuran populasi, batas \textit{abandonment} untuk lebah penjelajah, dan koefisien EOBL jika fitur tersebut diaktifkan. Algoritma mengasumsikan bahwa setiap \textit{data center} memproses 9 \textit{cloudlet} pada satu waktu, sehingga setiap solusi (sumber makanan) memiliki 9 dimensi (satu penugasan VM untuk setiap \textit{cloudlet}).
+
+Setelah algoritma ABC diinisialisasi, populasi awal dibuat menggunakan \textit{initPopulation}, dan kemudian algoritma ABC dijalankan dengan memanggil \textit{runABCAlgorithm}. Setelah algoritma selesai, solusi terbaik untuk alokasi VM diperoleh menggunakan \textit{getBestVmAllocationForDatacenter}, dan nilai \textit{fitness} terbaik ditampilkan. Akhirnya, \textit{cloudlet} dialokasikan ke VM berdasarkan solusi terbaik menggunakan \textit{broker.bindCloudletToVm}, yang merupakan fungsi CloudSim untuk menetapkan \textit{cloudlet} ke VM tertentu.
+
+Dengan pendekatan ini, algoritma ABC diintegrasikan secara efektif dengan CloudSim untuk mengoptimalkan penjadwalan tugas \textit{cloud}. Integrasi ini memungkinkan evaluasi kinerja algoritma ABC dalam lingkungan simulasi \textit{cloud} yang realistis, dengan metrik, seperti \textit{makespan}, \textit{average start time}, \textit{average finish time}, \textit{average execution time}, \textit{average waiting time}, \textit{scheduling length}, \textit{throughput}, \textit{resource utilization}, \textit{total energy consumption}, dan \textit{imbalance degree}. yang dihitung dan disimpan dalam \textit{file} CSV untuk analisis lebih lanjut.
+
+\subsubsection{Implementasi Algoritma ABC dengan EOBL}
+Peningkatan algoritma \textit{Artificial Bee Colony} (ABC) dengan \textit{Elite Opposition-Based Learning} (EOBL) diimplementasikan dalam algoritma ABC untuk meningkatkan kemampuan eksplorasi. Implementasi ini dikontrol melalui dua parameter utama yaitu \textit{USE\_EOABC} yang menentukan apakah fitur EOBL diaktifkan, dan \textit{EOABC\_COEFFICIENT} yang mengontrol tingkat oposisi dalam algoritma.
+
+\begin{lstlisting} [caption={Variabel EOBL pada CloudSim}, language=Java]
+// Apakah menggunakan peningkatan Elite Opposition-Based Artificial Bee Colony
+private static final boolean USE_EOABC = false; 
+// Koefisien EOABC yang mengontrol tingkat oposisi
+private static final double EOABC_COEFFICIENT = 0.3;
+\end{lstlisting}
+
+Implementasi EOBL terintegrasi dalam metode \textit{runABCEOBL} yang menggunakan pendekatan probabilistik untuk menentukan kapan menggunakan EOBL atau ABC saja. Pada setiap iterasi, algoritma \textit{megenerate} nilai probabilitas acak (\textit{Pr}) dan membandingkannya dengan ambang batas probabilitas (\textit{Pe}). Jika \textit{Pr} kurang dari \textit{Pe}, algoritma akan menjalankan prosedur EOBL, sedangkan jika tidak, maka akan menjalankan ABC saja.
+
+\begin{lstlisting} [caption={Fungsi \textit{applyEobl} pada CloudSim}, language=Java]
+private void runABCEOBL(Population population, int dataCenterIterator, int cloudletIteration) {
+    // Inisialisasi counter dan evaluasi awal
+    int t = 0;
+    int FEs = 0;
+    
+    while (FEs < MAX_FEs) {
+        Random random = new Random();
+        double Pr = random.nextDouble();
+        double Pe = 0.5; // Threshold probability
+        
+        if (Pr < Pe) {
+            // Implementasi EOBL
+            int EN = Math.max(2, populationSize / 10);
+            Individual[] eliteSolutions = selectEliteSolutions(population, EN);
+            // ... proses EOBL
+        } else {
+            // Eksekusi ABC
+            employedBeePhase(population, dataCenterIterator, cloudletIteration);
+            // ... fase lainnya
+        }
+        t++;
+    }
+}
+\end{lstlisting}
+
+Ketika EOBL dijalankan, algoritma pertama memilih sejumlah solusi \textit{elite} (\textit{EN}) dari populasi saat ini, yaitu 10\% dari ukuran populasi. Solusi-solusi \textit{elite} ini kemudian digunakan sebagai panduan untuk menciptakan solusi oposisi. Perhitungan solusi oposisi dilakukan menggunakan formula (\textit{minPosition} + \textit{maxPosition}) * \textit{d} - \textit{original}, di mana \textit{d} adalah koefisien EOBL yang dapat dikonfigurasi. Jika nilai oposisi yang dihasilkan berada di luar batas yang valid, nilai tersebut diganti dengan nilai acak dalam rentang yang diizinkan.
+
+Setelah solusi oposisi dibuat, algoritma menggabungkan populasi oposisi dengan populasi asli dan memilih individu-individu terbaik untuk membentuk populasi generasi berikutnya. Proses ini memungkinkan algoritma untuk menyeimbangkan eksplorasi dan eksploitasi, memanfaatkan informasi dari solusi \textit{elite} untuk memandu pencarian, dan memperkenalkan keragaman melalui solusi oposisi, sambil tetap mempertahankan solusi-solusi terbaik melalui mekanisme seleksi \textit{elite}. Parameter EOBL seperti koefisien \textit{d} dan probabilitas \textit{Pe} dapat disesuaikan untuk mengontrol tingkat oposisi dan frekuensi penggunaan EOBL, memungkinkan penyesuaian performa algoritma sesuai dengan karakteristik spesifik dari masalah penjadwalan yang dihadapi.
+
+\subsection{Implementasi Algoritma ABC pada \textit{Real Environment}}
+\subsubsection{Implementasi \textit{Real} Algoritma ABC}
+\subsubsection{A. Pengaturan Variabel dan Konstruktor ABC pada \textit{Real Environment}}
+Implementasi algoritma ABC pada \textit{real environment} dimulai dengan mendefinisikan parameter kontrol yang akan mengatur perilaku algoritma. Parameter utama meliputi \textit{DEFAULT\_ POPULATION\_SIZE} yang menentukan ukuran populasi lebah (30 lebah), \textit{DEFAULT\_ ITERATIONS} untuk jumlah iterasi maksimum (15 iterasi), \textit{DEFAULT\_LIMIT} sebagai ambang batas \textit{abandonment} (9), serta parameter EOBL seperti \textit{DEFAULT\_EOBL\_COEFFICIENT} (0.9) dan \textit{DEFAULT\_USE\_EOBL} (\textit{true}). Konstruktor ABC menerima dua parameter utama, yaitu \textit{tasks} yang merepresentasikan daftar tugas yang akan dijadwalkan dan \textit{numWorkers} yang menunjukkan jumlah \textit{worker} yang tersedia. Dalam konstruktor, populasi lebah dibagi menjadi tiga kelompok, yaitu \textit{employed bees} (50\% dari populasi), \textit{onlooker bees} (50\% dari populasi), dan satu \textit{scout bee}. Konstruktor juga menginisialisasi variabel \textit{tracking} seperti \textit{abandonmentCounter} untuk melacak sumber makanan yang tidak mengalami peningkatan, \textit{bestSolution} untuk menyimpan solusi terbaik, dan \textit{bestFitness} untuk menyimpan nilai \textit{fitness} terbaik.
+
+\begin{lstlisting} [caption={Variabel ABC pada \textit{real environment}}, language=Java]
+// Constants for ABC parameters
+const DEFAULT_POPULATION_SIZE = 30; // Swarm Size
+const DEFAULT_ITERATIONS = 15;
+const DEFAULT_LIMIT = 9; // Threshold for abandonment
+const DEFAULT_EOBL_COEFFICIENT = 0.9; // d coefficient for EOBL
+const DEFAULT_USE_EOBL = true;// Enable EOBL by default
+
+// Constants for cost and task calculations
+const WEIGHT_TO_MIPS = {
+  'ringan': 400,
+  'sedang': 500,
+  'berat': 600
+};
+
+const COST_PER_MIPS = 0.5;
+const COST_PER_RAM = 0.05;
+const COST_PER_BW = 0.1;
+const BANDWIDTH_USAGE = 1000;
+const RAM_USED = 512; // Renamed to match ba-obl.js
+\end{lstlisting}
+
+\begin{lstlisting} [caption={Konstruktor ABC pada \textit{real environment}}, language=Java]
+constructor(tasks, numWorkers) {
+  // Step 3: Define problem dimension
+  this.tasks = tasks;
+  this.numWorkers = numWorkers;
+  
+  // C. Controllable Parameters
+  this.populationSize = DEFAULT_POPULATION_SIZE; // Swarm Size (SN in EOBL pseudocode)
+  this.employedBeeCount = Math.floor(this.populationSize / 2); // 50% of swarm - employed bees
+  this.onlookerBeeCount = this.populationSize - this.employedBeeCount; // 50% of swarm - onlooker bees
+  this.scoutBeeCount = 1; // Always 1 scout bee
+  this.limit = DEFAULT_LIMIT; // Threshold for abandonment
+  this.maxIterations = DEFAULT_ITERATIONS;
+  
+  // EOBL parameters
+  this.d = DEFAULT_EOBL_COEFFICIENT; // Elite coefficient
+  this.useEOBL = DEFAULT_USE_EOBL; // Whether to use EOBL enhancement
+  
+  // Tracking variables
+  this.abandonmentCounter = new Array(this.populationSize).fill(0);
+  this.bestSolution = null;
+  this.bestFitness = -Infinity;
+}
+\end{lstlisting}
+
+\subsubsection{B. Pengaturan Variabel dan Konstruktor Individual pada \textit{Real Environment}}
+Implementasi individual pada \textit{real environment} merepresentasikan solusi penjadwalan \textit{task} dalam bentuk struktur data sederhana yang terdiri dari dua komponen utama. Pertama, \textit{position} yang diimplementasikan sebagai \textit{array} dengan panjang sesuai jumlah \textit{task} (\textit{taskCount}), dimana setiap elemen \textit{array} merepresentasikan \textit{worker} yang ditugaskan untuk mengerjakan \textit{task} tersebut. Nilai dalam \textit{position} dibatasi dari 0 hingga \textit{workerCount} - 1, menunjukkan indeks \textit{worker} yang tersedia. Kedua, \textit{fitness} yang diinisialisasi dengan nilai -1 untuk menandakan bahwa solusi belum dievaluasi. Pembuatan individual baru dilakukan melalui fungsi \textit{createIndividual} yang menerima parameter \textit{taskCount} dan \textit{workerCount}. Fungsi ini menggunakan \textit{Math.floor(Math.random()} * \textit{workerCount}) untuk menghasilkan nilai random yang akan mengisi \textit{array position}, memastikan setiap \textit{task} mendapat alokasi \textit{worker} secara acak namun valid dalam rentang yang ditentukan.
+
+\begin{lstlisting} [caption={Variabel individual ABC pada \textit{real environment}}, language=Java]
+// Step 4: Generate initial population
+function createIndividual(taskCount, workerCount) {
+  const position = Array.from({ length: taskCount }, () => Math.floor(Math.random() * workerCount));
+  return {
+    position,
+    fitness: -1
+  };
+}
+
+function createInitialPopulation(populationSize, taskCount, workerCount) {
+  return Array.from({ length: populationSize }, () => createIndividual(taskCount, workerCount));
+}
+\end{lstlisting}
+
+\subsubsection{C. Inisiasi Populasi pada \textit{Real Environment}}
+Inisiasi populasi pada \textit{real environment} merupakan tahap awal yang dimana sekumpulan solusi awal (sumber makanan) dibentuk untuk proses optimasi. Implementasinya dilakukan melalui fungsi \textit{createInitialPopulation} yang menerima tiga parameter penting, yaitu \textit{populationSize} yang menentukan jumlah individu dalam populasi, \textit{taskCount} yang menentukan panjang \textit{position array} (jumlah \textit{task} yang akan dijadwalkan), dan \textit{workerCount} yang menentukan jumlah \textit{worker} yang tersedia. Fungsi ini menggunakan \textit{method Array.from()} untuk membuat \textit{array} dengan panjang sesuai \textit{populationSize}, dimana setiap elemennya dibuat menggunakan fungsi \textit{createIndividual}. Dalam metode \textit{run()} dari kelas ABC, setelah populasi terbentuk, setiap individu dievaluasi menggunakan fungsi \textit{estimateFitness} untuk menghitung nilai \textit{fitness}-nya, dan jika ditemukan individu dengan \textit{fitness} lebih baik dari yang tersimpan, nilai \textit{bestFitness} dan \textit{bestSolution} akan diperbarui. Proses ini juga menginisialisasi \textit{abandonmentCounter} untuk melacak berapa lama sebuah sumber makanan tidak mengalami peningkatan. Inisiasi populasi ini menjadi fondasi penting untuk fase-fase berikutnya dalam algoritma ABC, memastikan bahwa proses optimasi dimulai dengan sekumpulan solusi yang valid dan beragam.
+
+\begin{lstlisting} [caption={Fungsi dan konstuktor \textit{population} ABC pada \textit{real environment}}, language=Java]
+function createInitialPopulation(populationSize, taskCount, workerCount) {
+  return Array.from({ length: populationSize }, () => createIndividual(taskCount, workerCount));
+}
+
+// Dalam metode run() kelas ABC:
+// Initialize the population
+let population = createInitialPopulation(this.populationSize, this.tasks.length, this.numWorkers);
+
+// Evaluate initial population
+for (const individual of population) {
+  estimateFitness(individual, this.tasks);
+  this.FEs++;
+  
+  // Initialize best solution to the first valid solution to avoid null result
+  if (this.bestSolution === null || individual.fitness > this.bestFitness) {
+    this.bestFitness = individual.fitness;
+    this.bestSolution = [...individual.position];
+  }
+}
+
+// Reset abandonment counters
+this.abandonmentCounter.fill(0);
+\end{lstlisting}
+
+\subsubsection{D. Evaluasi \textit{Fitness} pada \textit{Real Environment}}
+Evaluasi \textit{fitness} pada \textit{real environment} merupakan komponen yang menilai kualitas setiap solusi penjadwalan \textit{task}. Implementasinya dilakukan melalui fungsi \textit{estimateFitness} yang menerima parameter individual (representasi solusi) dan \textit{tasks} (daftar \textit{task} yang akan dijadwalkan). Untuk meningkatkan efisiensi, fungsi ini mengimplementasikan sistem \textit{cache} menggunakan \textit{Map} untuk mencegah perhitungan berulang. Fungsi menghitung dua metrik utama, yaitu total \textit{execution time} dan \textit{total cost}. Untuk setiap \textit{task}, fungsi menghitung waktu eksekusi berdasarkan MIPS (\textit{Million Instructions Per Second}) yang ditentukan oleh beban \textit{task} ('ringan': 400 MIPS, 'sedang': 500 MIPS, 'berat': 600 MIPS) dan biaya eksekusi yang mempertimbangkan penggunaan CPU (\textit{COST\_PER\_MIPS}), RAM (\textit{COST\_PER\_RAM}), dan \textit{bandwidth} (\textit{COST\_PER\_BW}). Nilai \textit{fitness} akhir dihitung dengan mengkombinasikan \textit{makespanFitness} (1/\textit{totalExec}) dan \textit{costFitness} (1/\textit{totalCost}), dimana semakin kecil total \textit{execution time} dan total \textit{cost} akan menghasilkan nilai \textit{fitness} yang lebih tinggi. Pendekatan multi-objektif ini memungkinkan algoritma ABC untuk mencari solusi yang optimal dalam hal waktu eksekusi dan biaya operasional secara bersamaan.
+
+\begin{lstlisting} [caption={Variabel evaluasi \textit{fitness} ABC pada \textit{real environment}}, language=Java]
+// Constants for cost and task calculations
+const WEIGHT_TO_MIPS = {
+  'ringan': 400,
+  'sedang': 500,
+  'berat': 600
+};
+
+const COST_PER_MIPS = 0.5;
+const COST_PER_RAM = 0.05;
+const COST_PER_BW = 0.1;
+const BANDWIDTH_USAGE = 1000;
+const RAM_USED = 512; // Renamed to match ba-obl.js
+
+// Cache for fitness calculations to prevent redundant calculations
+const fitnessCache = new Map();
+\end{lstlisting}
+
+\begin{lstlisting} [caption={Fungsi \textit{estimateFitness} ABC pada \textit{real environment}}, language=Java]
+function estimateFitness(individual, tasks) {
+  // Handle both cases: when individual is a full object or just a position array
+  const position = Array.isArray(individual) ? individual : individual.position;
+  
+  // Create a cache key from the position array
+  const cacheKey = position.join(',');
+  
+  // Check if we have a cached result
+  if (fitnessCache.has(cacheKey)) {
+    const cachedFitness = fitnessCache.get(cacheKey);
+    // If individual is an object, update its fitness property
+    if (!Array.isArray(individual)) {
+      individual.fitness = cachedFitness;
+    }
+    return cachedFitness;
+  }
+  
+  let totalExec = 0;
+  let totalCost = 0;
+
+  for (let i = 0; i < position.length; i++) {
+    const workerIndex = position[i];
+    const task = tasks[i];
+    
+    // Handle different task property formats
+    let taskLength = 0;
+    if (task.length) {
+      taskLength = task.length;
+    } else if (task.mi) {
+      taskLength = task.mi;
+    } else if (task.MI) {
+      taskLength = task.MI;
+    } else {
+      taskLength = 1000; // Default length if none found
+    }
+    
+    // Get MIPS for the task weight
+    const taskWeight = task.weight || 'sedang';
+    const mips = WEIGHT_TO_MIPS[taskWeight] || 500;
+
+    const execTime = taskLength / mips;
+    const cost = (execTime * COST_PER_MIPS) + (RAM_USED * COST_PER_RAM) + (BANDWIDTH_USAGE * COST_PER_BW);
+
+    totalExec += execTime;
+    totalCost += cost;
+  }
+
+  const makespanFitness = 1 / totalExec;
+  const costFitness = 1 / totalCost;
+  const fitness = makespanFitness + costFitness;
+  
+  // Cache the result
+  fitnessCache.set(cacheKey, fitness);
+  
+  // If individual is an object, update its fitness property
+  if (!Array.isArray(individual)) {
+    individual.fitness = fitness;
+  }
+  
+  return fitness;
+}
+\end{lstlisting}
+
+\subsubsection{E. Fase Lebah Pekerja (\textit{Employed Bee Phase}) pada \textit{Real Environment}}
+Fase lebah pekerja merupakan tahap awal dalam siklus optimasi algoritma ABC yang mengimplementasikan mekanisme eksplorasi solusi. Implementasinya dilakukan melalui \textit{method employedBeePhase} yang beroperasi pada setengah pertama dari populasi. Untuk setiap lebah pekerja, algoritma membuat solusi baru dengan memodifikasi solusi yang ada melalui proses berbagi informasi dengan lebah lain. Proses ini dimulai dengan memilih dimensi acak (indeks \textit{task}) yang akan dimodifikasi dan memilih partner acak sebagai referensi. Nilai \textit{phi} dipilih secara acak dari \textit{range} -1 hingga 1 untuk menentukan arah dan besarnya modifikasi. Nilai baru yang dihasilkan dibatasi agar tetap valid dalam \textit{range worker} yang tersedia (0 hingga \textit{numWorkers}-1). Setelah solusi baru terbentuk, \textit{fitness}-nya dievaluasi menggunakan fungsi \textit{estimateFitness}. Mekanisme seleksi \textit{greedy} kemudian diterapkan, jika solusi baru memiliki \textit{fitness} lebih baik, ia menggantikan solusi lama dan \textit{abandonmentCounter} direset (\textit{positive feedback}), jika tidak, \textit{abandonmentCounter} diinkremen (\textit{negative feedback}). Jika solusi baru lebih baik dari solusi terbaik global, \textit{bestFitness} dan \textit{bestSolution} juga diperbarui.
+
+\begin{lstlisting} [caption={Fungsi fase lebah pekerja pada \textit{real environment}}, language=Java]
+// Step 7-9: Employee Bee Phase
+// Implements Positive/Negative Feedback through abandonment counter
+employedBeePhase(population) {
+  // For each employed bee
+  for (let i = 0; i < this.employedBeeCount; i++) {
+    const currentBee = population[i];
+    
+    // Step 8: Find new food sources and evaluate the fitness
+    const newSolution = {
+      position: [...currentBee.position],
+      fitness: -1
+    };
+    
+    // Multiple Interactions: Share information through position updates
+    const dimension = Math.floor(Math.random() * currentBee.position.length);
+    let partnerIndex;
+    do {
+      partnerIndex = Math.floor(Math.random() * this.employedBeeCount);
+    } while (partnerIndex === i);
+    
+    const partner = population[partnerIndex];
+    
+    // Calculate new position based on shared information
+    const phi = Math.floor(Math.random() * 3) - 1;
+    let newValue = currentBee.position[dimension] + 
+                  phi * (currentBee.position[dimension] - partner.position[dimension]);
+    
+    newValue = Math.max(0, Math.min(this.numWorkers - 1, newValue));
+    newSolution.position[dimension] = newValue;
+
+    // Evaluate fitness of new food source
+    const newFitness = estimateFitness(newSolution, this.tasks);
+
+    // Step 9: Apply greedy selection mechanism
+    if (newFitness > currentBee.fitness) {
+      population[i] = newSolution;
+      this.abandonmentCounter[i] = 0; // Positive Feedback: Reset counter on improvement
+      
+      if (newFitness > this.bestFitness) {
+        this.bestFitness = newFitness;
+        this.bestSolution = [...newSolution.position];
+      }
+    } else {
+      this.abandonmentCounter[i]++; // Negative Feedback: Increment counter on failure
+    }
+  }
+}
+\end{lstlisting}
+
+\subsubsection{F. Fase Lebah Pengamat (\textit{Onlooker Bee Phase}) pada \textit{Real Environment}}
+Fase lebah pengamat merupakan tahap kedua dalam algoritma ABC yang mengimplementasikan mekanisme eksploitasi solusi berbasis probabilitas. Implementasinya terdiri dari dua bagian utama. Pertama, \textit{method calculateProbabilities} menghitung probabilitas seleksi untuk setiap sumber makanan berdasarkan nilai \textit{fitness} relatifnya, dimana sumber makanan dengan \textit{fitness} lebih tinggi mendapat probabilitas lebih besar. Metode ini juga memastikan probabilitas \textit{non-zero} untuk mencegah \textit{infinite loops}. Kedua, method \textit{onlookerBeePhase} menggunakan probabilitas tersebut untuk memilih dan memodifikasi solusi. Berbeda dengan fase lebah pekerja, lebah pengamat memilih sumber makanan secara probabilistik berdasarkan kualitasnya. Algoritma juga mengimplementasikan mekanisme \textit{force selection} untuk memastikan progres jika terlalu banyak percobaan gagal. Ketika sebuah sumber makanan terpilih, proses modifikasi solusi dilakukan dengan cara yang sama seperti fase lebah pekerja, yaitu memilih dimensi acak, memilih partner acak, dan menerapkan modifikasi posisi. Solusi baru yang dihasilkan dievaluasi dan dibandingkan dengan solusi lama menggunakan mekanisme seleksi \textit{greedy}.
+ 
+\begin{lstlisting} [caption={Fungsi \textit{calculateProbabilities} pada \textit{real environment}}, language=Java]
+// Step 11: Calculate probabilities for onlooker bees
+// Part of Multiple Interactions characteristic - information sharing
+calculateProbabilities(population) {
+  const fitnesses = population
+    .slice(0, this.employedBeeCount)
+    .map(bee => bee.fitness);
+  
+  const sum = fitnesses.reduce((a, b) => a + b, 0);
+  
+  // Ensure we have non-zero probabilities to prevent infinite loops
+  if (sum <= 0) {
+    return Array(this.employedBeeCount).fill(1 / this.employedBeeCount);
+  }
+  
+  return fitnesses.map(fitness => fitness / sum);
+}
+\end{lstlisting}
+
+\begin{lstlisting} [caption={Fungsi \textit{onlookerBeePhase} pada \textit{real environment}}, language=Java]
+// Step 12-17: Onlooker Bee Phase
+// Implements quality-based selection process
+onlookerBeePhase(population, probabilities) {
+  let t = 0;
+  let i = 0;
+  
+  // Add maximum iteration counter to prevent infinite loops
+  let maxAttempts = this.employedBeeCount * 10;
+  let attempts = 0;
+  
+  while (t < this.onlookerBeeCount && attempts < maxAttempts) {
+    attempts++;
+    
+    // Step 13: Choose food source based on quality (probability)
+    const r = Math.random();
+    
+    // Force selection after too many failures to ensure progress
+    const forceSelection = attempts > this.employedBeeCount * 3;
+    
+    if (forceSelection || r < probabilities[i]) {
+      const currentBee = population[i];
+      
+      // Step 14: Produce new food source
+      const newSolution = {
+        position: [...currentBee.position],
+        fitness: -1
+      };
+
+      // Multiple Interactions: Share information through position updates
+      const dimension = Math.floor(Math.random() * currentBee.position.length);
+      let partnerIndex;
+      do {
+        partnerIndex = Math.floor(Math.random() * this.employedBeeCount);
+      } while (partnerIndex === i);
+      
+      const partner = population[partnerIndex];
+      
+      const phi = Math.floor(Math.random() * 3) - 1;
+      let newValue = currentBee.position[dimension] + 
+                    phi * (currentBee.position[dimension] - partner.position[dimension]);
+      
+      newValue = Math.max(0, Math.min(this.numWorkers - 1, newValue));
+      newSolution.position[dimension] = newValue;
+
+      // Step 15: Evaluate fitness
+      const newFitness = estimateFitness(newSolution, this.tasks);
+
+      // Step 16: Apply greedy selection mechanism
+      if (newFitness > currentBee.fitness) {
+        population[i] = newSolution;
+        this.abandonmentCounter[i] = 0; // Positive Feedback
+        
+        if (newFitness > this.bestFitness) {
+          this.bestFitness = newFitness;
+          this.bestSolution = [...newSolution.position];
+        }
+      } else {
+        this.abandonmentCounter[i]++; // Negative Feedback
+      }
+      t++;
+    }
+    i = (i + 1) % this.employedBeeCount;
+  }
+}
+\end{lstlisting}
+
+\subsubsection{G. Fase Lebah Penjelajah (\textit{Scout Bee Phase}) pada \textit{Real Environment}}
+Fase lebah penjelajah merupakan tahap akhir dalam algoritma ABC yang mengimplementasikan mekanisme eksplorasi global untuk menghindari konvergensi prematur. Implementasinya melibatkan dua fungsi utama. Pertama, \textit{method checkForScoutBees} yang memeriksa apakah ada sumber makanan yang perlu ditinggalkan dengan mengecek apakah \textit{abandonmentCounter} untuk setiap lebah pekerja telah melebihi nilai \textit{limit} (dalam implementasi ini adalah 9). Kedua, \textit{method scoutBeePhase} yang mengirim lebah penjelajah untuk menemukan sumber makanan baru. Ketika sumber makanan dianggap tidak produktif, lebah penjelajah akan menciptakan solusi yang benar-benar baru menggunakan fungsi \textit{createIndividual}, yang menghasilkan \textit{position array} acak dengan panjang sesuai jumlah \textit{task}. Solusi baru ini kemudian dievaluasi menggunakan \textit{estimateFitness} dan menggantikan solusi lama yang ditinggalkan. Proses ini mengimplementasikan karakteristik \textit{fluctuations} dari algoritma ABC, dimana \textit{abandonmentCounter} untuk posisi tersebut direset ke 0, memberikan kesempatan \textit{fresh start} untuk eksplorasi. Jika solusi baru memiliki \textit{fitness} lebih baik dari \textit{bestFitness} global, informasi solusi terbaik juga diperbarui.
+
+\begin{lstlisting} [caption={Fungsi \textit{scoutBeePhase} pada \textit{real environment}}, language=Java]
+// Step 18-21: Scout Bee Phase
+// Implements Fluctuations characteristic through random exploration
+scoutBeePhase(population) {
+  // Step 19: Check for scout bees
+  for (let i = 0; i < this.employedBeeCount; i++) {
+    if (this.abandonmentCounter[i] > this.limit) {
+      // Step 20: Send scout bee to random food source
+      const scout = createIndividual(this.tasks.length, this.numWorkers);
+      const fitness = estimateFitness(scout, this.tasks);
+      
+      // Replace abandoned solution - Fluctuations characteristic
+      population[i] = scout;
+      this.abandonmentCounter[i] = 0;
+
+      if (fitness > this.bestFitness) {
+        this.bestFitness = fitness;
+        this.bestSolution = [...scout.position];
+      }
+    }
+  }
+}
+\end{lstlisting}
+
+\begin{lstlisting} [caption={Fungsi \textit{checkForScoutBees} pada \textit{real environment}}, language=Java]
+// Check for scout bees
+checkForScoutBees(population) {
+  for (let i = 0; i < this.employedBeeCount; i++) {
+    if (this.abandonmentCounter[i] > this.limit) {
+      return true;
+    }
+  }
+  return false;
+}
+\end{lstlisting}
+
+\subsubsection{H. Implementasi pada \textit{Real Environment}}
+Implementasi algoritma ABC pada \textit{real environment} diorganisir dalam \textit{method runABC} yang mengkoordinasikan tiga fase utama algoritma. \textit{Method} ini menerima parameter \textit{population} yang merupakan kumpulan solusi yang sedang dioptimasi. Proses optimasi dimulai dengan fase lebah pekerja yang mengeksplorasi solusi di sekitar sumber makanan yang ada, dilanjutkan dengan memperbarui penghitung evaluasi fungsi (\textit{FEs}) sesuai dengan jumlah lebah pekerja. Setelah itu, sistem menghitung probabilitas seleksi untuk setiap sumber makanan menggunakan \textit{calculateProbabilities}. Fase berikutnya adalah lebah pengamat yang menggunakan probabilitas tersebut untuk memilih dan memodifikasi solusi yang menjanjikan, diikuti pembaruan \textit{FEs} sesuai jumlah lebah pengamat. Sebelum berlanjut ke fase terakhir, sistem menyimpan solusi terbaik yang ditemukan menggunakan \textit{storeBestFoodSource}. Sistem kemudian memeriksa keberadaan sumber makanan yang perlu ditinggalkan dengan \textit{checkForScoutBees}. Fase terakhir adalah lebah penjelajah yang hanya dijalankan jika ditemukan sumber makanan yang perlu ditinggalkan, diikuti pembaruan \textit{FEs} sesuai jumlah lebah penjelajah.
+
+\begin{lstlisting} [caption={Fungsi pengaturan implementasi ABC pada \textit{real environment}}, language=Java]
+// Helper method to run ABC procedure
+runABC(population) {
+  console.log("- Starting Employed Bee Phase");
+  // Employed Bee Phase
+  this.employedBeePhase(population);
+  this.FEs += this.employedBeeCount;
+  
+  // Calculate probabilities
+  const probabilities = this.calculateProbabilities(population);
+  
+  console.log("- Starting Onlooker Bee Phase");
+  // Onlooker Bee Phase
+  this.onlookerBeePhase(population, probabilities);
+  this.FEs += this.onlookerBeeCount;
+  
+  // Store Best Food Source
+  this.storeBestFoodSource(population);
+  
+  console.log("- Checking for Scout Bees");
+  // Scout Bee Phase
+  const scoutBeeExists = this.checkForScoutBees(population);
+  if (scoutBeeExists) {
+    console.log("- Scout Bee Found - Starting Scout Bee Phase");
+    this.scoutBeePhase(population);
+    this.FEs += this.scoutBeeCount;
+  } else {
+    console.log("- No Scout Bees Found");
+  }
+  
+  console.log("- ABC Procedure Completed Successfully");
+}
+\end{lstlisting}
+
+\subsubsection{Implementasi Algoritma ABC dengan EOBL pada \textit{Real Environment}}
+Implementasi algoritma ABC dengan \textit{Elite Opposition-Based Learning} (EOBL) pada \textit{real environment} merupakan peningkatan dari algoritma ABC yang dikendalikan oleh dua parameter utama, yaitu \textit{useEOBL} (\textit{default: true}) untuk mengaktifkan fitur EOBL dan \textit{d} (\textit{DEFAULT\_EOBL\_COEFFICIENT:} 0.9) untuk mengontrol tingkat pengaruh solusi \textit{elite}. Dalam metode \textit{run()}, pada setiap iterasi, algoritma meng \textit{generate} nilai probabilitas acak (\textit{Pr}) dan membandingkannya dengan ambang batas \textit{Pe} (0.5). Jika EOBL diaktifkan dan \textit{Pr} kurang dari \textit{Pe}, algoritma menjalankan prosedur EOBL dengan memilih sekitar 10\% solusi terbaik (\textit{EN}) sebagai solusi \textit{elite} menggunakan \textit{selectEliteSolutions}. Batas-batas (\textit{lowerBounds} dan \textit{upperBounds}) dari solusi \textit{elite} kemudian dihitung dengan \textit{calculateEliteBoundaries}. Untuk setiap solusi dalam populasi, dibuat solusi oposisi \textit{elite} menggunakan \textit{createEliteOpposition} berdasarkan nilai \textit{k} acak yang menentukan solusi \textit{elite} mana yang digunakan sebagai referensi. Solusi oposisi ini mengikuti formula yang menggabungkan nilai oposisi dan pengaruh solusi \textit{elite} $newValue = Math.floor((1-d) * opposite + d * eliteSolution.position[i])$. Setiap solusi oposisi dievaluasi dan ditambahkan ke populasi oposisi. Akhirnya, populasi oposisi digabungkan dengan populasi asli, diurutkan berdasarkan \textit{fitness}, dan populasi baru dibentuk dengan memilih solusi-solusi terbaik menggunakan \textit{mergeAndSelectBest}.
+
+\begin{lstlisting} [caption={Fase EOBL pada \textit{real environment}}, language=Java]
+// In run() method
+if (this.useEOBL && Pr < Pe) {
+  console.log("Using EOBL procedure");
+  
+  // Choose EN elite solutions
+  const EN = Math.max(2, Math.floor(this.populationSize / 10)); // 10% of population
+  const eliteSolutions = this.selectEliteSolutions(population, EN);
+  
+  // Calculate boundaries of elite solutions
+  const bounds = this.calculateEliteBoundaries(eliteSolutions);
+  
+  // Initialize opposition population (EOP in pseudocode)
+  const oppositionPopulation = [];
+  
+  // For each solution in population (SN in pseudocode)
+  for (let i = 0; i < this.populationSize; i++) {
+    // k = rand(0, 1)
+    const k = Math.random();
+    
+    // Create elite opposition-based solution EOi for the ith solution Xi
+    const oppositeIndividual = this.createEliteOpposition(
+      population[i], 
+      eliteSolutions, 
+      k,
+      bounds
+    );
+    
+    // Evaluate new solution EOi
+    estimateFitness(oppositeIndividual, this.tasks);
+    
+    oppositionPopulation.push(oppositeIndividual);
+    
+    this.FEs++;
+  }
+  
+  // Choose the top best SN solutions from {P, EOP}
+  population = this.mergeAndSelectBest(population, oppositionPopulation);
+}
+\end{lstlisting}
+
+\begin{lstlisting} [caption={Fungsi \textit{createEliteOpposition} ABC pada \textit{real environment}}, language=Java]
+// Helper method to create elite opposition-based solution
+createEliteOpposition(original, eliteSolutions, k, bounds) {
+  const newSolution = {
+    position: [...original.position],
+    fitness: -1
+  };
+
+  // Select elite solution based on random k
+  const eliteIndex = Math.floor(k * eliteSolutions.length);
+  const eliteSolution = eliteSolutions[eliteIndex];
+
+  // Apply elite opposition for each dimension
+  for (let i = 0; i < original.position.length; i++) {
+    const { lowerBounds, upperBounds } = bounds;
+    // Calculate opposite value with elite influence and boundaries
+    const opposite = lowerBounds[i] + upperBounds[i] - original.position[i];
+    const newValue = Math.floor((1 - this.d) * opposite + this.d * eliteSolution.position[i]);
+    
+    // Ensure value is within bounds
+    newSolution.position[i] = Math.max(0, Math.min(this.numWorkers - 1, newValue));
+  }
+
+  return newSolution;
+}
+\end{lstlisting}
